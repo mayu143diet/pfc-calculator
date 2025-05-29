@@ -1,1 +1,129 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PFCバランス計算機</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", sans-serif;
+      background-color: #fffafc;
+      margin: 0;
+      padding: 20px;
+      color: #444;
+    }
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      padding: 20px;
+    }
+    h1 {
+      font-size: 1.5em;
+      color: #d78ca4;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin: 10px 0 5px;
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      font-size: 1em;
+    }
+    button {
+      width: 100%;
+      background-color: #f7b5cc;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background-color: #e39ab3;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #fef1f5;
+      border-radius: 10px;
+      font-size: 0.95em;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>PFCバランス計算機</h1>
+    <label for="gender">性別</label>
+    <select id="gender">
+      <option value="female">女性</option>
+      <option value="male">男性</option>
+    </select>
 
+    <label for="height">身長 (cm)</label>
+    <input type="number" id="height" required />
+
+    <label for="weight">体重 (kg)</label>
+    <input type="number" id="weight" required />
+
+    <label for="activity">活動量</label>
+    <select id="activity">
+      <option value="1.2">低い（デスクワーク中心）</option>
+      <option value="1.5">普通（立ち仕事・軽い運動）</option>
+      <option value="1.75">高い（運動習慣あり）</option>
+    </select>
+
+    <button onclick="calculatePFC()">計算する</button>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    function calculatePFC() {
+      const gender = document.getElementById("gender").value;
+      const height = parseFloat(document.getElementById("height").value);
+      const weight = parseFloat(document.getElementById("weight").value);
+      const activity = parseFloat(document.getElementById("activity").value);
+
+      if (!height || !weight) {
+        alert("身長と体重を入力してください");
+        return;
+      }
+
+      let bmr;
+      if (gender === "male") {
+        bmr = 13.397 * weight + 4.799 * height - 5.677 * 30 + 88.362;
+      } else {
+        bmr = 9.247 * weight + 3.098 * height - 4.330 * 30 + 447.593;
+      }
+
+      const tdee = Math.round(bmr * activity);
+
+      // PFC比率：たんぱく質20%、脂質25%、炭水化物55%
+      const protein = Math.round((tdee * 0.2) / 4);
+      const fat = Math.round((tdee * 0.25) / 9);
+      const carb = Math.round((tdee * 0.55) / 4);
+
+      const result = `
+        推定必要カロリー: <strong>${tdee} kcal</strong><br>
+        ● たんぱく質: <strong>${protein} g</strong><br>
+        ● 脂質: <strong>${fat} g</strong><br>
+        ● 炭水化物: <strong>${carb} g</strong>
+      `;
+      document.getElementById("result").innerHTML = result;
+    }
+  </script>
+</body>
+</html>
