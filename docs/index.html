@@ -100,6 +100,7 @@ function calculateAll() {
 
   const totalLossKg = weight - targetWeight;
   const dailyDeficit = totalLossKg > 0 ? totalLossKg * 7700 / (months * 30) : 0;
+  const adjustedTdee = tdee - dailyDeficit;
 
   let alertText = "";
   if (targetBMI < 18.5) {
@@ -111,6 +112,8 @@ function calculateAll() {
   document.getElementById("result").innerHTML = `
     <div><strong>🌟 PFCバランス:</strong><br>
     タンパク質: ${p}g / 脂質: ${f}g / 炭水化物: ${c}g</div><br>
+    <div><strong>🔋 推定消費カロリー (TDEE):</strong> ${tdee.toFixed(0)} kcal</div>
+    <div><strong>📉 減量中の目安摂取カロリー:</strong> ${adjustedTdee.toFixed(0)} kcal</div>
     <div><strong>📏 現在のBMI:</strong> ${bmi.toFixed(1)}</div>
     <div><strong>🎯 目標BMI:</strong> ${targetBMI.toFixed(1)}</div>
     <div><strong>🔥 1日あたりの目安カロリー削減:</strong> ${dailyDeficit.toFixed(1)} kcal</div>
