@@ -55,6 +55,9 @@
       margin-top: 10px;
       font-weight: bold;
     }
+    ul {
+      padding-left: 20px;
+    }
   </style>
 </head>
 <body>
@@ -109,6 +112,23 @@ function calculateAll() {
     alertText = "✅ すでに目標体重以下です！";
   }
 
+  // 食品と運動のカロリー換算
+  const deficit = dailyDeficit.toFixed(0);
+  const foodInfo = `
+    <ul>
+      <li>油（大さじ1）約111 kcal → ${Math.round(deficit / 111)} 杯分</li>
+      <li>ショートケーキ（1個 約330 kcal）→ 約 ${Math.round(deficit / 330)} 個分</li>
+      <li>クロワッサン（1個 約230 kcal）→ 約 ${Math.round(deficit / 230)} 個分</li>
+      <li>ポテチ（30g 約168 kcal）→ 約 ${Math.round(deficit / 168)} 袋分</li>
+    </ul>`;
+
+  const exerciseInfo = `
+    <ul>
+      <li>ウォーキング（時速4km）：約3.5kcal/kg/時 → 約 ${Math.round(deficit / (3.5 * weight / 60))} 分</li>
+      <li>ジョギング（時速8km）：約8kcal/kg/時 → 約 ${Math.round(deficit / (8 * weight / 60))} 分</li>
+      <li>水泳（平泳ぎ）：約10kcal/kg/時 → 約 ${Math.round(deficit / (10 * weight / 60))} 分</li>
+    </ul>`;
+
   document.getElementById("result").innerHTML = `
     <div><strong>🌟 PFCバランス:</strong><br>
     タンパク質: ${p}g / 脂質: ${f}g / 炭水化物: ${c}g</div><br>
@@ -118,6 +138,8 @@ function calculateAll() {
     <div><strong>🎯 目標BMI:</strong> ${targetBMI.toFixed(1)}</div>
     <div><strong>🔥 1日あたりの目安カロリー削減:</strong> ${dailyDeficit.toFixed(1)} kcal</div>
     ${alertText ? `<div class="alert">${alertText}</div>` : ""}
+    <div><strong>🍰 このカロリーを消費するには？</strong>${foodInfo}</div>
+    <div><strong>💪 このカロリーを運動で消費するには？</strong>${exerciseInfo}</div>
   `;
 }
 </script></body>
