@@ -20,7 +20,7 @@
       padding: 15px;
       margin-bottom: 20px;
     }
-    input {
+    input, select {
       margin: 5px 0;
       padding: 5px;
       border-radius: 6px;
@@ -43,14 +43,27 @@
       color: red;
       font-weight: bold;
     }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #ffe6f0;
+    }
   </style>
 </head>
 <body><h2>🍽 PFCバランス＋BMI＋減量目標計算機</h2>
 <div class="box">
   <label>性別:
     <select id="gender">
+      <option value="female" selected>女性</option>
       <option value="male">男性</option>
-      <option value="female">女性</option>
     </select>
   </label><br>
   <label>身長(cm): <input type="number" id="height"></label><br>
@@ -79,6 +92,17 @@
 </div><h2>🔥 ◯kcalを消費するには？</h2>
 <div class="box" id="burnResult">
   計算後にここに表示されます。
+</div><h2>📊 BMI分類（参考）</h2>
+<div class="box">
+  <table>
+    <tr><th>BMI</th><th>分類</th></tr>
+    <tr><td>〜18.4</td><td>低体重</td></tr>
+    <tr><td>18.5〜24.9</td><td>普通体重</td></tr>
+    <tr><td>25.0〜29.9</td><td>肥満（1度）</td></tr>
+    <tr><td>30.0〜34.9</td><td>肥満（2度）</td></tr>
+    <tr><td>35.0〜39.9</td><td>肥満（3度）</td></tr>
+    <tr><td>40.0〜</td><td>肥満（4度）</td></tr>
+  </table>
 </div><script>
 function calculateAll() {
   const gender = document.getElementById("gender").value;
@@ -128,7 +152,7 @@ function calculateAll() {
 
   document.getElementById("burnResult").innerHTML = `
     <b>このカロリーを消費するには…</b><br>
-    💧 油（大さじ1＝111kcal）× ${Math.round(dailyDeficit / 111)} 杯分<br>
+    🍰 油（大さじ1＝111kcal）× ${Math.round(dailyDeficit / 111)} 杯分<br>
     🍰 ショートケーキ（350kcal）× ${Math.round(dailyDeficit / 350)} 個分<br>
     🥐 クロワッサン（250kcal）× ${Math.round(dailyDeficit / 250)} 個分<br>
     🍟 ポテチ（60g＝336kcal）× ${Math.round(dailyDeficit / 336)} 袋分<br><br>
