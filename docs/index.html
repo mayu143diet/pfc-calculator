@@ -2,7 +2,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PFCバランス計算機</title>
+  <title>まいにちダイエットノート</title>
   <style>
     body {
       font-family: "Helvetica Neue", sans-serif;
@@ -92,7 +92,7 @@ button:hover {
   </style>
 </head>
 <body>
-  <h1>PFCバランス計算機</h1>
+  <h1>まいにちダイエットノート</h1>
   <div class="form">
     <label for="gender">性別：</label>
     <select id="gender">
@@ -140,6 +140,65 @@ button:hover {
     <textarea id="logText" rows="4" placeholder="例：朝食 400kcal／ウォーキング 30分 120kcal など"></textarea>
     <button onclick="updateLog()">ログを追加</button>
   </div>  <div id="logResult"><b>摂取＆消費カロリーログ</b><br>ここにログが表示されます。</div>  <script>
+    function calculateAll() {
+      const gender = document.getElementById("gender").value;
+      const height = parseFloat(document.getElementById("height").value);
+      const weight = parseFloat(document.getElementById("weight").value);
+      const activity = parseFloat(document.getElementById("activity").value);
+      const targetWeight = parseFloat(document.getElementById("targetWeight").value);
+      const days = parseFloat(document.getElementById("days").value);
+
+      if (isNaN(height) || isNaN(weight) || isNaN(activity)) {
+        alert("すべての入力欄に数値を入力してください。");
+        return;
+      }
+
+      const bmi = weight / ((height / 100) ** 2);
+      const bmr = gender === "male"
+        ? 10 * weight + 6.25 * height - 5 * 30 + 5
+        : 10 * weight + 6.25 * height - 5 * 30 - 161;
+      const tdee = bmr * activity;
+
+      const totalCalories = tdee;
+      const protein = weight * 1.6;
+      const fat = (totalCalories * 0.25) / 9;
+      const carbs = (totalCalories - (protein * 4 + fat * 9)) / 4;
+
+      let goalMessage = "";
+      if (!isNaN(targetWeight) && !isNaN(days) && days > 0) {
+        const weightDiff = weight - targetWeight;
+        const deficitPerDay = (weightDiff * 7200) / days;
+        const caution = (weightDiff / weight) / (days / 30) > 0.1;
+        goalMessage = `<br><b>目標達成のためには、1日あたり約 ${deficitPerDay.toFixed(0)} kcal 減らす必要があります。</b>`;
+        if (caution) {
+          goalMessage += `<br><span class='alert'>⚠️ 目標が高すぎるかもしれません（1ヶ月に体重の10％以上）</span>`;
+        }
+      }
+
+      document.getElementById("result").innerHTML =
+        `<b>BMI：</b> ${bmi.toFixed(1)}<br>` +
+        `<b>1日に必要なカロリー：</b> ${totalCalories.toFixed(0)} kcal<br>` +
+        `<b>PFCバランス（g）</b><br>たんぱく質：${protein.toFixed(0)}g<br>脂質：${fat.toFixed(0)}g<br>炭水化物：${carbs.toFixed(0)}g` +
+        goalMessage;
+
+      document.getElementById("burnResult").innerHTML =
+        `<b>例：このカロリーを消費するには？</b><br>
+        ・ウォーキング（時速5km）：${(totalCalories / 3.5).toFixed(0)} 分<br>
+        ・ジョギング（時速8km）：${(totalCalories / 8).toFixed(0)} 分<br>
+        ・水泳（平泳ぎ）：${(totalCalories / 7).toFixed(0)} 分<br>
+        <br><b>食品に換算すると？</b><br>
+        ・クロワッサン：約${(totalCalories / 200).toFixed(1)} 個<br>
+        ・ショートケーキ：約${(totalCalories / 350).toFixed(1)} 個<br>
+        ・ポテチ：約${(totalCalories / 550 * 100).toFixed(0)} g<br>
+        ・サラダ油：約${(totalCalories / 111).toFixed(1)} 大さじ`;
+    }
+
+    function clearInputs() {
+      document.querySelectorAll("input, select").forEach(el => el.value = "");
+      document.getElementById("result").innerHTML = "";
+      document.getElementById("burnResult").innerHTML = "";
+    }
+
     function updateLog() {
       const log = document.getElementById("logText").value;
       const resultDiv = document.getElementById("logResult");
