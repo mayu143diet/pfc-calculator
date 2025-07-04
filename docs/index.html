@@ -1,109 +1,3 @@
-<!DOCTYPE html><html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PFC＋BMI＋減量＆ログ計算機</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      padding: 20px;
-      background: #fff8f8;
-      color: #333;
-    }
-    h2 {
-      color: #cc6699;
-    }
-    .box {
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      padding: 15px;
-      margin-bottom: 20px;
-    }
-    input, select {
-      margin: 5px 0;
-      padding: 5px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      width: 100%;
-    }
-    button {
-      background: #ff99aa;
-      color: white;
-      border: none;
-      padding: 10px 15px;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    #result {
-      margin-top: 15px;
-    }
-    .alert {
-      color: red;
-      font-weight: bold;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
-      text-align: center;
-    }
-    th {
-      background-color: #ffe6f0;
-    }
-  </style>
-</head>
-<body><h2>🍽 PFCバランス＋BMI＋減量目標計算機</h2>
-<div class="box">
-  <label>性別:
-    <select id="gender">
-      <option value="female" selected>女性</option>
-      <option value="male">男性</option>
-    </select>
-  </label><br>
-  <label>身長(cm): <input type="number" id="height"></label><br>
-  <label>体重(kg): <input type="number" id="weight"></label><br>
-  <label>活動レベル:
-    <select id="activity">
-      <option value="1.2">低い（座りがち）</option>
-      <option value="1.375">やや低い（軽い運動）</option>
-      <option value="1.55">普通（中程度の運動）</option>
-      <option value="1.725">高い（ハードな運動）</option>
-    </select>
-  </label><br>
-  <label>目標体重(kg): <input type="number" id="targetWeight"></label><br>
-  <label>目標期間(日): <input type="number" id="days"></label><br>
-  <button onclick="calculateAll()">計算する</button>
-  <div id="result"></div>
-</div><h2>🔥 ◯kcalを消費するには？</h2>
-<div class="box" id="burnResult">
-  計算後にここに表示されます。
-</div><h2>📊 BMI分類（参考）</h2>
-<div class="box">
-  <table>
-    <tr><th>BMI</th><th>分類</th></tr>
-    <tr><td>〜18.4</td><td>低体重</td></tr>
-    <tr><td>18.5〜24.9</td><td>普通体重</td></tr>
-    <tr><td>25.0〜29.9</td><td>肥満（1度）</td></tr>
-    <tr><td>30.0〜34.9</td><td>肥満（2度）</td></tr>
-    <tr><td>35.0〜39.9</td><td>肥満（3度）</td></tr>
-    <tr><td>40.0〜</td><td>肥満（4度）</td></tr>
-  </table>
-</div><h2>📝 摂取＆消費ログ（1日）</h2>
-<div class="box">
-  <label>朝ごはん(kcal): <input type="number" id="calBreakfast"></label><br>
-  <label>昼ごはん(kcal): <input type="number" id="calLunch"></label><br>
-  <label>夜ごはん(kcal): <input type="number" id="calDinner"></label><br>
-  <label>おやつ(kcal): <input type="number" id="calSnack"></label><br>
-  <label>運動で消費(kcal): <input type="number" id="calExercise"></label><br>
-  <button onclick="logCalories()">ログを計算</button>
-  <div id="logResult"></div>
-</div><script>
 function calculateAll() {
   const gender = document.getElementById("gender").value;
   const height = parseFloat(document.getElementById("height").value);
@@ -129,9 +23,11 @@ function calculateAll() {
   const months = (days / 30).toFixed(1);
 
   let alertMsg = "";
-  if (bmi < 18.5) alertMsg += '<div class="alert">⚠️ BMIが18.5未満です。健康的な範囲を意識してね！</div>';
-  if ((weight - targetWeight) > weight * 0.1 && days <= 30) {
-    alertMsg += '<div class="alert">⚠️ 1ヶ月で体重の10%以上の減量は推奨されません。目標を見直してみてね！</div>';
+  if (bmi < 18.5) {
+    alertMsg += '<div class="alert">⚠️ BMIが18.5未満です。健康的な範囲を意識してね！</div>';
+  }
+  if ((weight - targetWeight) / weight > 0.1 && days < 30) {
+    alertMsg += '<div class="alert">⚠️ 1ヶ月未満で体重の10%以上の減量は危険です！</div>';
   }
 
   const protein = Math.round(weight * 1.5);
@@ -165,21 +61,9 @@ function calculateAll() {
   `;
 }
 
-function logCalories() {
-  const b = parseFloat(document.getElementById("calBreakfast").value) || 0;
-  const l = parseFloat(document.getElementById("calLunch").value) || 0;
-  const d = parseFloat(document.getElementById("calDinner").value) || 0;
-  const s = parseFloat(document.getElementById("calSnack").value) || 0;
-  const e = parseFloat(document.getElementById("calExercise").value) || 0;
-  const total = b + l + d + s - e;
-  const tdee = parseFloat(document.getElementById("result").innerHTML.match(/TDEE<\/b>: (\d+)/)?.[1]) || 2000;
-  const diff = tdee - total;
-  document.getElementById("logResult").innerHTML = `
-    🍴 摂取カロリー: ${b + l + d + s} kcal<br>
-    🏃‍♀️ 消費カロリー: ${e} kcal<br>
-    🔄 差引: ${total} kcal<br>
-    <b>${diff > 0 ? `あと${diff} kcal OK！` : `⚠️ ${-diff} kcalオーバー！`}</b>
-  `;
+function clearInputs() {
+  document.querySelectorAll('input').forEach(input => input.value = "");
+  document.getElementById("result").innerHTML = "";
+  document.getElementById("burnResult").innerHTML = "計算後にここに表示されます。";
+  document.getElementById("logResult").innerHTML = "";
 }
-</script></body>
-</html>
