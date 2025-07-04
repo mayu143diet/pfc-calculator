@@ -119,21 +119,6 @@ button:hover {
 <label for="days">目標達成日数（日）：</label>
 <input type="number" id="days">
 
-<label for="breakfast">🍞 朝食（kcal）：</label>
-<input type="text" id="breakfast">
-
-<label for="lunch">🍱 昼食（kcal）：</label>
-<input type="text" id="lunch">
-
-<label for="dinner">🍛 夕食（kcal）：</label>
-<input type="text" id="dinner">
-
-<label for="snack">🍫 間食（kcal）：</label>
-<input type="text" id="snack">
-
-<label for="exercise">🏃‍♀️ 運動（消費kcal）：</label>
-<input type="text" id="exercise">
-
   </div>  <div class="button-group">
     <button onclick="calculateAll()">計算する</button>
     <button onclick="clearInputs()">クリア</button>
@@ -150,7 +135,8 @@ button:hover {
       <tr><td>40.0以上</td><td>肥満（4度）</td></tr>
     </table>
   </div>  <div id="logInput" style="margin-top: 40px;">
-    <label for="logText">📓 摂取＆消費カロリーログを追加：</label>
+    <h2>📓 摂取＆消費カロリーログを追加</h2>
+    <label for="logText">記録内容：</label>
     <textarea id="logText" rows="4" placeholder="例：朝食 400kcal／ウォーキング 30分 120kcal など"></textarea>
     <button onclick="updateLog()">ログを追加</button>
   </div>  <div id="logResult"><b>摂取＆消費カロリーログ</b><br>ここにログが表示されます。</div>  <script>
