@@ -76,6 +76,9 @@
   <label>運動で消費(kcal): <input type="number" id="calExercise"></label><br>
   <button onclick="logCalories()">ログを計算</button>
   <div id="logResult"></div>
+</div><h2>🔥 ◯kcalを消費するには？</h2>
+<div class="box" id="burnResult">
+  計算後にここに表示されます。
 </div><script>
 function calculateAll() {
   const gender = document.getElementById("gender").value;
@@ -121,6 +124,17 @@ function calculateAll() {
     <b>減量進捗シミュレーター</b><br>
     🎯 目標体重${targetWeight}kgまでに必要なカロリー削減: ${Math.round(calorieDeficit)} kcal<br>
     🔻 毎日${dailyDeficit} kcalカットできれば約${days}日 (${months}ヶ月) で達成可能！<br>
+  `;
+
+  document.getElementById("burnResult").innerHTML = `
+    <b>このカロリーを消費するには…</b><br>
+    🍰 油（大さじ1＝111kcal）× ${Math.round(dailyDeficit / 111)} 杯分<br>
+    🍰 ショートケーキ（350kcal）× ${Math.round(dailyDeficit / 350)} 個分<br>
+    🥐 クロワッサン（250kcal）× ${Math.round(dailyDeficit / 250)} 個分<br>
+    🍟 ポテチ（60g＝336kcal）× ${Math.round(dailyDeficit / 336)} 袋分<br><br>
+    🏃‍♀️ ウォーキング（3.5METs）× 約 ${Math.round(dailyDeficit / (3.5 * weight * 0.0175))} 分<br>
+    🏃‍♂️ ジョギング（7METs）× 約 ${Math.round(dailyDeficit / (7 * weight * 0.0175))} 分<br>
+    🏊‍♀️ 水泳（10METs）× 約 ${Math.round(dailyDeficit / (10 * weight * 0.0175))} 分
   `;
 }
 
