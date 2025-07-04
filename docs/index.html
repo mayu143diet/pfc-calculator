@@ -69,15 +69,21 @@
 <body>
   <h1>まいにちダイエットノート</h1>
   <div class="container">
-    <label for="weight">現在の体重 (kg)</label>
-    <input type="number" id="weight"><label for="height">身長 (cm)</label>
+    <label for="gender">性別</label>
+    <select id="gender">
+      <option value="female" selected>女性</option>
+      <option value="male">男性</option>
+    </select><label for="height">身長 (cm)</label>
 <input type="number" id="height">
 
-<label for="gender">性別</label>
-<select id="gender">
-  <option value="female" selected>女性</option>
-  <option value="male">男性</option>
-</select>
+<label for="weight">現在の体重 (kg)</label>
+<input type="number" id="weight">
+
+<label for="targetWeight">目標体重 (kg)</label>
+<input type="number" id="targetWeight">
+
+<label for="days">何日で達成したい？</label>
+<input type="number" id="days">
 
 <label for="activity">生活強度</label>
 <select id="activity">
@@ -87,12 +93,6 @@
   <option value="1.725">高い（運動習慣あり）</option>
   <option value="1.9">非常に高い（ハードトレーニング）</option>
 </select>
-
-<label for="targetWeight">目標体重 (kg)</label>
-<input type="number" id="targetWeight">
-
-<label for="days">何日で達成したい？</label>
-<input type="number" id="days">
 
 <button onclick="calculate()">計算する</button>
 <button onclick="clearForm()">クリア</button>
@@ -152,6 +152,15 @@
         caution = "<div class='alert'>⚠️ 1ヶ月未満で体重の10%以上の減量は危険です！</div>";
       }
 
+      const cake = (dailyDeficit / 350).toFixed(1);
+      const croissant = (dailyDeficit / 200).toFixed(1);
+      const chips = (dailyDeficit / 330).toFixed(1);
+      const oil = (dailyDeficit / 110).toFixed(1);
+
+      const walk = (dailyDeficit / 100 * 30).toFixed(0);
+      const jog = (dailyDeficit / 240 * 30).toFixed(0);
+      const swim = (dailyDeficit / 300 * 30).toFixed(0);
+
       document.getElementById("result").innerHTML =
         `📏 現在のBMI: ${bmi}<br>
          🎯 目標BMI: ${targetBmi}<br>
@@ -161,15 +170,15 @@
          ${caution}`;
 
       document.getElementById("burnGuide").innerHTML =
-        `<strong>🍰 食べ物でカロリーを減らすと？</strong><br>
-         ・ショートケーキ1個：約350kcal<br>
-         ・クロワッサン1個：約200kcal<br>
-         ・ポテチ1袋（60g）：約330kcal<br>
-         ・油大さじ1：約110kcal<br><br>
-         <strong>🏃‍♀️ 運動で消費するには？（体重50kgの目安）</strong><br>
-         ・ウォーキング30分：約100kcal<br>
-         ・ジョギング30分：約240kcal<br>
-         ・水泳30分：約300kcal`;
+        `<strong>🍰 ${dailyDeficit}kcal減らすには？</strong><br>
+         ・ショートケーキ ${cake}個分<br>
+         ・クロワッサン ${croissant}個分<br>
+         ・ポテチ ${chips}袋分（60g）<br>
+         ・油 大さじ${oil}杯分<br><br>
+         <strong>🏃‍♀️ 運動で消費するには？</strong><br>
+         ・ウォーキング ${walk}分<br>
+         ・ジョギング ${jog}分<br>
+         ・水泳 ${swim}分`;
     }
 
     function clearForm() {
