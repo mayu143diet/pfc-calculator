@@ -1,10 +1,22 @@
-<style>
-body {
-  font-family: "Helvetica Neue", sans-serif;
-  background: #fff9f9;
-  color: #333;
-  padding: 20px;
-  line-height: 1.6;
+<!DOCTYPE html><html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PFCバランス計算機</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", sans-serif;
+      background: #fff9f9;
+      color: #333;
+      padding: 20px;
+      line-height: 1.6;
+      max-width: 600px;
+      margin: auto;
+    }h1 {
+  font-size: 1.8em;
+  text-align: center;
+  margin-bottom: 20px;
+  color: #f78fb3;
 }
 
 .form label {
@@ -26,6 +38,7 @@ input, select {
   margin-top: 20px;
   display: flex;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 button {
@@ -36,6 +49,8 @@ button {
   border-radius: 20px;
   cursor: pointer;
   font-weight: bold;
+  flex: 1;
+  min-width: 120px;
 }
 
 button:hover {
@@ -54,94 +69,141 @@ button:hover {
   color: #d8000c;
   font-weight: bold;
 }
-</style><!-- 入力フォーム --><div class="form">
-  <label for="gender">性別：</label>
-  <select id="gender">
-    <option value="female" selected>女性</option>
-    <option value="male">男性</option>
-  </select><br><label for="height">身長（cm）：</label> <input type="number" id="height"><br>
 
-<label for="weight">体重（kg）：</label> <input type="number" id="weight"><br>
-
-<label for="activity">活動量：</label> <select id="activity"> <option value="1.2">ほぼ動かない</option> <option value="1.375">軽い運動（週1〜3回）</option> <option value="1.55">中程度の運動（週3〜5回）</option> <option value="1.725">激しい運動（週6〜7回）</option> <option value="1.9">非常に激しい運動（1日2回など）</option> </select><br>
-
-<label for="targetWeight">目標体重（kg）：</label> <input type="number" id="targetWeight"><br>
-
-<label for="days">目標達成日数（日）：</label> <input type="number" id="days"><br><br>
-
-</div><!-- ボタン --><div class="button-group">
-  <button onclick="calculateAll()">計算する</button>
-  <button onclick="clearInputs()">クリア</button>
-</div><!-- 結果表示エリア --><div id="result"></div>
-<div id="burnResult">計算後にここに表示されます。</div>
-<div id="logResult"></div><script>
-function calculateAll() {
-  const gender = document.getElementById("gender").value;
-  const height = parseFloat(document.getElementById("height").value);
-  const weight = parseFloat(document.getElementById("weight").value);
-  const activity = parseFloat(document.getElementById("activity").value);
-  const targetWeight = parseFloat(document.getElementById("targetWeight").value);
-  const days = parseFloat(document.getElementById("days").value);
-
-  if (!height || !weight || !activity || !targetWeight || !days) {
-    document.getElementById("result").innerHTML = '<span class="alert">⚠️ 入力をすべて埋めてね！</span>';
-    return;
-  }
-
-  const bmr = gender === "male"
-    ? 10 * weight + 6.25 * height - 5 * 30 + 5
-    : 10 * weight + 6.25 * height - 5 * 30 - 161;
-  const tdee = Math.round(bmr * activity);
-  const targetCal = Math.round(tdee - (7700 * (weight - targetWeight) / days));
-
-  const bmi = (weight / ((height/100) ** 2)).toFixed(1);
-  const calorieDeficit = 7700 * (weight - targetWeight);
-  const dailyDeficit = Math.round(calorieDeficit / days);
-  const months = (days / 30).toFixed(1);
-
-  let alertMsg = "";
-  if (bmi < 18.5) {
-    alertMsg += '<div class="alert">⚠️ BMIが18.5未満です。健康的な範囲を意識してね！</div>';
-  }
-  if ((weight - targetWeight) / weight > 0.1 && days < 30) {
-    alertMsg += '<div class="alert">⚠️ 1ヶ月未満で体重の10%以上の減量は危険です！</div>';
-  }
-
-  const protein = Math.round(weight * 1.5);
-  const fat = Math.round(weight * 0.9);
-  const carb = Math.round((targetCal - (protein*4 + fat*9)) / 4);
-
-  document.getElementById("result").innerHTML = `
-    <b>PFCバランス</b><br>
-    🍗 たんぱく質: ${protein}g<br>
-    🥑 脂質: ${fat}g<br>
-    🍚 炭水化物: ${carb}g<br><br>
-    <b>基礎代謝BMR</b>: ${Math.round(bmr)} kcal<br>
-    <b>推定消費カロリーTDEE</b>: ${tdee} kcal<br>
-    <b>減量中の目安摂取カロリー</b>: ${targetCal} kcal<br><br>
-    <b>BMI</b>: ${bmi}<br>
-    ${alertMsg}<br>
-    <b>減量進捗シミュレーター</b><br>
-    🎯 目標体重${targetWeight}kgまでに必要なカロリー削減: ${Math.round(calorieDeficit)} kcal<br>
-    🔻 毎日${dailyDeficit} kcalカットできれば約${days}日 (${months}ヶ月) で達成可能！<br>
-  `;
-
-  document.getElementById("burnResult").innerHTML = `
-    <b>このカロリーを消費するには…</b><br>
-    🍰 油（大さじ1＝111kcal）× ${Math.round(dailyDeficit / 111)} 杯分<br>
-    🍰 ショートケーキ（350kcal）× ${Math.round(dailyDeficit / 350)} 個分<br>
-    🥐 クロワッサン（250kcal）× ${Math.round(dailyDeficit / 250)} 個分<br>
-    🍟 ポテチ（60g＝336kcal）× ${Math.round(dailyDeficit / 336)} 袋分<br><br>
-    🏃‍♀️ ウォーキング（3.5METs）× 約 ${Math.round(dailyDeficit / (3.5 * weight * 0.0175))} 分<br>
-    🏃‍♂️ ジョギング（7METs）× 約 ${Math.round(dailyDeficit / (7 * weight * 0.0175))} 分<br>
-    🏊‍♀️ 水泳（10METs）× 約 ${Math.round(dailyDeficit / (10 * weight * 0.0175))} 分
-  `;
+#bmiTable {
+  margin-top: 20px;
+  background: #fff0f5;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
-function clearInputs() {
-  document.querySelectorAll('input').forEach(input => input.value = "");
-  document.getElementById("result").innerHTML = "";
-  document.getElementById("burnResult").innerHTML = "計算後にここに表示されます。";
-  document.getElementById("logResult").innerHTML = "";
+#bmiTable table {
+  width: 100%;
+  border-collapse: collapse;
 }
-</script>
+
+#bmiTable th, #bmiTable td {
+  padding: 8px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+  </style>
+</head>
+<body>
+  <h1>PFCバランス計算機</h1>
+  <div class="form">
+    <label for="gender">性別：</label>
+    <select id="gender">
+      <option value="female" selected>女性</option>
+      <option value="male">男性</option>
+    </select><label for="height">身長（cm）：</label>
+<input type="number" id="height">
+
+<label for="weight">体重（kg）：</label>
+<input type="number" id="weight">
+
+<label for="activity">活動量：</label>
+<select id="activity">
+  <option value="1.2">ほぼ動かない</option>
+  <option value="1.375">軽い運動（週1〜3回）</option>
+  <option value="1.55">中程度の運動（週3〜5回）</option>
+  <option value="1.725">激しい運動（週6〜7回）</option>
+  <option value="1.9">非常に激しい運動（1日2回など）</option>
+</select>
+
+<label for="targetWeight">目標体重（kg）：</label>
+<input type="number" id="targetWeight">
+
+<label for="days">目標達成日数（日）：</label>
+<input type="number" id="days">
+
+  </div>  <div class="button-group">
+    <button onclick="calculateAll()">計算する</button>
+    <button onclick="clearInputs()">クリア</button>
+  </div>  <div id="result"></div>
+  <div id="burnResult">計算後にここに表示されます。</div>
+  <div id="logResult"><b>摂取＆消費カロリーログ</b><br>ここにログが表示されます。</div>  <div id="bmiTable">
+    <b>BMIの分類表</b>
+    <table>
+      <tr><th>BMI値</th><th>分類</th></tr>
+      <tr><td>18.5未満</td><td>低体重</td></tr>
+      <tr><td>18.5〜24.9</td><td>普通体重</td></tr>
+      <tr><td>25.0〜29.9</td><td>肥満（1度）</td></tr>
+      <tr><td>30.0〜34.9</td><td>肥満（2度）</td></tr>
+      <tr><td>35.0〜39.9</td><td>肥満（3度）</td></tr>
+      <tr><td>40.0以上</td><td>肥満（4度）</td></tr>
+    </table>
+  </div>  <script>
+    function calculateAll() {
+      const gender = document.getElementById("gender").value;
+      const height = parseFloat(document.getElementById("height").value);
+      const weight = parseFloat(document.getElementById("weight").value);
+      const activity = parseFloat(document.getElementById("activity").value);
+      const targetWeight = parseFloat(document.getElementById("targetWeight").value);
+      const days = parseFloat(document.getElementById("days").value);
+
+      if (!height || !weight || !activity || !targetWeight || !days) {
+        document.getElementById("result").innerHTML = '<span class="alert">⚠️ 入力をすべて埋めてね！</span>';
+        return;
+      }
+
+      const bmr = gender === "male"
+        ? 10 * weight + 6.25 * height - 5 * 30 + 5
+        : 10 * weight + 6.25 * height - 5 * 30 - 161;
+      const tdee = Math.round(bmr * activity);
+      const targetCal = Math.round(tdee - (7700 * (weight - targetWeight) / days));
+
+      const bmi = (weight / ((height/100) ** 2)).toFixed(1);
+      const calorieDeficit = 7700 * (weight - targetWeight);
+      const dailyDeficit = Math.round(calorieDeficit / days);
+      const months = (days / 30).toFixed(1);
+
+      let alertMsg = "";
+      if (bmi < 18.5) {
+        alertMsg += '<div class="alert">⚠️ BMIが18.5未満です。健康的な範囲を意識してね！</div>';
+      }
+      if ((weight - targetWeight) / weight > 0.1 && days < 30) {
+        alertMsg += '<div class="alert">⚠️ 1ヶ月未満で体重の10%以上の減量は危険です！</div>';
+      }
+
+      const protein = Math.round(weight * 1.5);
+      const fat = Math.round(weight * 0.9);
+      const carb = Math.round((targetCal - (protein*4 + fat*9)) / 4);
+
+      document.getElementById("result").innerHTML = `
+        <b>PFCバランス</b><br>
+        🍗 たんぱく質: ${protein}g<br>
+        🥑 脂質: ${fat}g<br>
+        🍚 炭水化物: ${carb}g<br><br>
+        <b>基礎代謝BMR</b>: ${Math.round(bmr)} kcal<br>
+        <b>推定消費カロリーTDEE</b>: ${tdee} kcal<br>
+        <b>減量中の目安摂取カロリー</b>: ${targetCal} kcal<br><br>
+        <b>BMI</b>: ${bmi}<br>
+        ${alertMsg}<br>
+        <b>減量進捗シミュレーター</b><br>
+        🎯 目標体重${targetWeight}kgまでに必要なカロリー削減: ${Math.round(calorieDeficit)} kcal<br>
+        🔻 毎日${dailyDeficit} kcalカットできれば約${days}日 (${months}ヶ月) で達成可能！<br>
+      `;
+
+      document.getElementById("burnResult").innerHTML = `
+        <b>このカロリーを消費するには…</b><br>
+        🍰 油（大さじ1＝111kcal）× ${Math.round(dailyDeficit / 111)} 杯分<br>
+        🍰 ショートケーキ（350kcal）× ${Math.round(dailyDeficit / 350)} 個分<br>
+        🥐 クロワッサン（250kcal）× ${Math.round(dailyDeficit / 250)} 個分<br>
+        🍟 ポテチ（60g＝336kcal）× ${Math.round(dailyDeficit / 336)} 袋分<br><br>
+        🏃‍♀️ ウォーキング（3.5METs）× 約 ${Math.round(dailyDeficit / (3.5 * weight * 0.0175))} 分<br>
+        🏃‍♂️ ジョギング（7METs）× 約 ${Math.round(dailyDeficit / (7 * weight * 0.0175))} 分<br>
+        🏊‍♀️ 水泳（10METs）× 約 ${Math.round(dailyDeficit / (10 * weight * 0.0175))} 分
+      `;
+    }
+
+    function clearInputs() {
+      document.querySelectorAll('input').forEach(input => input.value = "");
+      document.getElementById("result").innerHTML = "";
+      document.getElementById("burnResult").innerHTML = "計算後にここに表示されます。";
+      document.getElementById("logResult").innerHTML = "<b>摂取＆消費カロリーログ</b><br>ここにログが表示されます。";
+    }
+  </script></body>
+</html>
