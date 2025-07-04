@@ -25,7 +25,7 @@
   font-weight: bold;
 }
 
-input, select {
+input, select, textarea {
   width: 100%;
   padding: 8px;
   border: 1px solid #ddd;
@@ -123,8 +123,11 @@ button:hover {
     <button onclick="calculateAll()">計算する</button>
     <button onclick="clearInputs()">クリア</button>
   </div>  <div id="result"></div>
-  <div id="burnResult">計算後にここに表示されます。</div>
-  <div id="logResult"><b>摂取＆消費カロリーログ</b><br>ここにログが表示されます。</div>  <div id="bmiTable">
+  <div id="burnResult">計算後にここに表示されます。</div>  <div id="logInput">
+    <label for="logText">🍽️ 摂取＆消費カロリーログを入力：</label>
+    <textarea id="logText" rows="4" placeholder="例：朝食 400kcal／ウォーキング 30分 120kcal など"></textarea>
+    <button onclick="updateLog()">ログを追加</button>
+  </div>  <div id="logResult"><b>摂取＆消費カロリーログ</b><br>ここにログが表示されます。</div>  <div id="bmiTable">
     <b>BMIの分類表</b>
     <table>
       <tr><th>BMI値</th><th>分類</th></tr>
@@ -203,7 +206,17 @@ button:hover {
       document.querySelectorAll('input').forEach(input => input.value = "");
       document.getElementById("result").innerHTML = "";
       document.getElementById("burnResult").innerHTML = "計算後にここに表示されます。";
+      document.getElementById("logText").value = "";
       document.getElementById("logResult").innerHTML = "<b>摂取＆消費カロリーログ</b><br>ここにログが表示されます。";
+    }
+
+    function updateLog() {
+      const log = document.getElementById("logText").value;
+      const resultDiv = document.getElementById("logResult");
+      if (log.trim()) {
+        resultDiv.innerHTML += `<br>・${log}`;
+        document.getElementById("logText").value = "";
+      }
     }
   </script></body>
 </html>
