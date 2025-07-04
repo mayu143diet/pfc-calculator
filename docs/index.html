@@ -4,6 +4,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>まいにちダイエットノート</title>
   <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
     body {
       font-family: "Helvetica Neue", sans-serif;
@@ -186,14 +187,14 @@ button:hover {
 
       document.getElementById("burnResult").innerHTML =
         `<b>例：このカロリーを消費するには？</b><br>
-        ・ウォーキング（時速5km）：${(totalCalories / 3.5).toFixed(0)} 分<br>
-        ・ジョギング（時速8km）：${(totalCalories / 8).toFixed(0)} 分<br>
-        ・水泳（平泳ぎ）：${(totalCalories / 7).toFixed(0)} 分<br>
+        <i class='fas fa-walking'></i> ウォーキング（時速5km）：${(totalCalories / 3.5).toFixed(0)} 分<br>
+        <i class='fas fa-running'></i> ジョギング（時速8km）：${(totalCalories / 8).toFixed(0)} 分<br>
+        <i class='fas fa-swimmer'></i> 水泳（平泳ぎ）：${(totalCalories / 7).toFixed(0)} 分<br>
         <br><b>食品に換算すると？</b><br>
-        ・クロワッサン：約${(totalCalories / 200).toFixed(1)} 個<br>
-        ・ショートケーキ：約${(totalCalories / 350).toFixed(1)} 個<br>
-        ・ポテチ：約${(totalCalories / 550 * 100).toFixed(0)} g<br>
-        ・サラダ油：約${(totalCalories / 111).toFixed(1)} 大さじ`;
+        🥐 クロワッサン：約${(totalCalories / 200).toFixed(1)} 個<br>
+        🍰 ショートケーキ：約${(totalCalories / 350).toFixed(1)} 個<br>
+        🍟 ポテチ：約${(totalCalories / 550 * 100).toFixed(0)} g<br>
+        🛢 サラダ油：約${(totalCalories / 111).toFixed(1)} 大さじ`;
     }
 
     function clearInputs() {
