@@ -1,4 +1,60 @@
-<!-- 入力フォーム --><div class="form">
+<style>
+body {
+  font-family: "Helvetica Neue", sans-serif;
+  background: #fff9f9;
+  color: #333;
+  padding: 20px;
+  line-height: 1.6;
+}
+
+.form label {
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+input, select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-sizing: border-box;
+  margin-top: 5px;
+}
+
+.button-group {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+button {
+  background: #f8a5c2;
+  border: none;
+  padding: 10px 20px;
+  color: white;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button:hover {
+  background: #f78fb3;
+}
+
+#result, #burnResult, #logResult {
+  background: #fff0f5;
+  border-radius: 12px;
+  padding: 15px;
+  margin-top: 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.alert {
+  color: #d8000c;
+  font-weight: bold;
+}
+</style><!-- 入力フォーム --><div class="form">
   <label for="gender">性別：</label>
   <select id="gender">
     <option value="female" selected>女性</option>
