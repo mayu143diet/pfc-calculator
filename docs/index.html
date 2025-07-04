@@ -28,7 +28,7 @@
       display: block;
       margin-top: 10px;
     }
-    input[type="number"] {
+    input[type="number"], select {
       width: 100%;
       padding: 8px;
       margin-top: 5px;
@@ -73,6 +73,21 @@
     <input type="number" id="weight"><label for="height">身長 (cm)</label>
 <input type="number" id="height">
 
+<label for="gender">性別</label>
+<select id="gender">
+  <option value="female" selected>女性</option>
+  <option value="male">男性</option>
+</select>
+
+<label for="activity">生活強度</label>
+<select id="activity">
+  <option value="1.2">低い（座り仕事中心）</option>
+  <option value="1.375">やや低い（軽い運動）</option>
+  <option value="1.55">普通（中程度の運動）</option>
+  <option value="1.725">高い（運動習慣あり）</option>
+  <option value="1.9">非常に高い（ハードトレーニング）</option>
+</select>
+
 <label for="targetWeight">目標体重 (kg)</label>
 <input type="number" id="targetWeight">
 
@@ -106,6 +121,8 @@
       const height = parseFloat(document.getElementById("height").value);
       const targetWeight = parseFloat(document.getElementById("targetWeight").value);
       const days = parseFloat(document.getElementById("days").value);
+      const gender = document.getElementById("gender").value;
+      const activity = parseFloat(document.getElementById("activity").value);
 
       if (!weight || !height || !targetWeight || !days) {
         document.getElementById("result").innerHTML = "⚠️ 全ての項目を入力してください。";
@@ -114,11 +131,19 @@
 
       const bmi = (weight / ((height / 100) ** 2)).toFixed(1);
       const targetBmi = (targetWeight / ((height / 100) ** 2)).toFixed(1);
-      const bmr = 22 * ((height / 100) ** 2);
+
+      let bmr = 0;
+      if (gender === "female") {
+        bmr = 10 * weight + 6.25 * height - 5 * 30 - 161;
+      } else {
+        bmr = 10 * weight + 6.25 * height - 5 * 30 + 5;
+      }
+
+      const tdee = bmr * activity;
       const caloriePerKg = 7200;
       const totalDeficit = (weight - targetWeight) * caloriePerKg;
       const dailyDeficit = (totalDeficit / days).toFixed(0);
-      const recommendedCalories = (bmr - dailyDeficit).toFixed(0);
+      const recommendedCalories = (tdee - dailyDeficit).toFixed(0);
 
       let caution = "";
       if (targetBmi < 18.5) {
