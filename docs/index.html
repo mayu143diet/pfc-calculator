@@ -108,21 +108,6 @@
     <li>BMI 30以上：肥満（2度以上）</li>
   </ul>
 </div>
-<div class="log">
-  <h3>📓 摂取＆消費カロリーログ</h3>
-  <label for="logMorning">🍳 朝食</label>
-  <textarea id="logMorning" rows="2"></textarea>
-  <label for="logLunch">🍱 昼食</label>
-  <textarea id="logLunch" rows="2"></textarea>
-  <label for="logDinner">🍛 夕食</label>
-  <textarea id="logDinner" rows="2"></textarea>
-  <label for="logSnack">🍩 間食</label>
-  <textarea id="logSnack" rows="2"></textarea>
-  <label for="logExercise">🏃‍♀️ 運動</label>
-  <textarea id="logExercise" rows="2"></textarea>
-  <button onclick="addLog()">ログを追加</button>
-  <div id="logArea"></div>
-</div>
 
   </div>  <script>
     function calculate() {
@@ -599,22 +584,6 @@
       document.getElementById("days").value = "";
       document.getElementById("result").innerHTML = "";
       document.getElementById("burnGuide").innerHTML = "";
-    }
-
-    function addLog() {
-      const morning = document.getElementById("logMorning").value;
-      const lunch = document.getElementById("logLunch").value;
-      const dinner = document.getElementById("logDinner").value;
-      const snack = document.getElementById("logSnack").value;
-      const exercise = document.getElementById("logExercise").value;
-      const log = document.getElementById("logArea");
-      log.innerHTML += `☀️ 朝: ${morning}<br>🍱 昼: ${lunch}<br>🌙 夜: ${dinner}<br>🍩 間食: ${snack}<br>🏃‍♀️ 運動: ${exercise}<br><br>`;
-
-      document.getElementById("logMorning").value = "";
-      document.getElementById("logLunch").value = "";
-      document.getElementById("logDinner").value = "";
-      document.getElementById("logSnack").value = "";
-      document.getElementById("logExercise").value = "";
     }
   </script><!-- ログ入力セクション -->
 <div class="log-section">
