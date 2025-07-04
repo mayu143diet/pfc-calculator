@@ -80,15 +80,6 @@
   <label>目標期間(日): <input type="number" id="days"></label><br>
   <button onclick="calculateAll()">計算する</button>
   <div id="result"></div>
-</div><h2>📝 摂取＆消費ログ（1日）</h2>
-<div class="box">
-  <label>朝ごはん(kcal): <input type="number" id="calBreakfast"></label><br>
-  <label>昼ごはん(kcal): <input type="number" id="calLunch"></label><br>
-  <label>夜ごはん(kcal): <input type="number" id="calDinner"></label><br>
-  <label>おやつ(kcal): <input type="number" id="calSnack"></label><br>
-  <label>運動で消費(kcal): <input type="number" id="calExercise"></label><br>
-  <button onclick="logCalories()">ログを計算</button>
-  <div id="logResult"></div>
 </div><h2>🔥 ◯kcalを消費するには？</h2>
 <div class="box" id="burnResult">
   計算後にここに表示されます。
@@ -103,6 +94,15 @@
     <tr><td>35.0〜39.9</td><td>肥満（3度）</td></tr>
     <tr><td>40.0〜</td><td>肥満（4度）</td></tr>
   </table>
+</div><h2>📝 摂取＆消費ログ（1日）</h2>
+<div class="box">
+  <label>朝ごはん(kcal): <input type="number" id="calBreakfast"></label><br>
+  <label>昼ごはん(kcal): <input type="number" id="calLunch"></label><br>
+  <label>夜ごはん(kcal): <input type="number" id="calDinner"></label><br>
+  <label>おやつ(kcal): <input type="number" id="calSnack"></label><br>
+  <label>運動で消費(kcal): <input type="number" id="calExercise"></label><br>
+  <button onclick="logCalories()">ログを計算</button>
+  <div id="logResult"></div>
 </div><script>
 function calculateAll() {
   const gender = document.getElementById("gender").value;
@@ -129,7 +129,10 @@ function calculateAll() {
   const months = (days / 30).toFixed(1);
 
   let alertMsg = "";
-  if (bmi < 18.5) alertMsg = '<div class="alert">⚠️ BMIが18.5未満です。健康的な範囲を意識してね！</div>';
+  if (bmi < 18.5) alertMsg += '<div class="alert">⚠️ BMIが18.5未満です。健康的な範囲を意識してね！</div>';
+  if ((weight - targetWeight) > weight * 0.1 && days <= 30) {
+    alertMsg += '<div class="alert">⚠️ 1ヶ月で体重の10%以上の減量は推奨されません。目標を見直してみてね！</div>';
+  }
 
   const protein = Math.round(weight * 1.5);
   const fat = Math.round(weight * 0.9);
