@@ -1,3 +1,4 @@
+<script>
 function calculateAll() {
   const gender = document.getElementById("gender").value;
   const height = parseFloat(document.getElementById("height").value);
@@ -67,3 +68,5 @@ function clearInputs() {
   document.getElementById("burnResult").innerHTML = "計算後にここに表示されます。";
   document.getElementById("logResult").innerHTML = "";
 }
+</script><!-- HTML内に追加するクリアボタン --><button onclick="clearInputs()">クリア</button>
+
