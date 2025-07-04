@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="ja">
+<!DOCTYPE html>
+<html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -73,43 +74,61 @@
     <select id="gender">
       <option value="female" selected>女性</option>
       <option value="male">男性</option>
-    </select><label for="height">身長 (cm)</label>
-<input type="number" id="height">
+    </select>
 
-<label for="weight">現在の体重 (kg)</label>
-<input type="number" id="weight">
+    <label for="height">身長 (cm)</label>
+    <input type="number" id="height">
 
-<label for="targetWeight">目標体重 (kg)</label>
-<input type="number" id="targetWeight">
+    <label for="weight">現在の体重 (kg)</label>
+    <input type="number" id="weight">
 
-<label for="days">何日で達成したい？</label>
-<input type="number" id="days">
+    <label for="targetWeight">目標体重 (kg)</label>
+    <input type="number" id="targetWeight">
 
-<label for="activity">生活強度</label>
-<select id="activity">
-  <option value="1.2">低い（座り仕事中心）</option>
-  <option value="1.375">やや低い（軽い運動）</option>
-  <option value="1.55">普通（中程度の運動）</option>
-  <option value="1.725">高い（運動習慣あり）</option>
-  <option value="1.9">非常に高い（ハードトレーニング）</option>
-</select>
+    <label for="days">何日で達成したい？</label>
+    <input type="number" id="days">
 
-<button onclick="calculate()">計算する</button>
-<button onclick="clearForm()">クリア</button>
+    <label for="activity">生活強度</label>
+    <select id="activity">
+      <option value="1.2">低い（座り仕事中心）</option>
+      <option value="1.375">やや低い（軽い運動）</option>
+      <option value="1.55">普通（中程度の運動）</option>
+      <option value="1.725">高い（運動習慣あり）</option>
+      <option value="1.9">非常に高い（ハードトレーニング）</option>
+    </select>
 
-<div class="result" id="result"></div>
-<div class="burn-guide" id="burnGuide"></div>
-<div class="bmi-info">
-  <h3>📚 BMIの目安</h3>
-  <ul>
-    <li>BMI 18.5未満：低体重</li>
-    <li>BMI 18.5～24.9：標準</li>
-    <li>BMI 25～29.9：肥満（1度）</li>
-    <li>BMI 30以上：肥満（2度以上）</li>
-  </ul>
-</div>
+    <button onclick="calculate()">計算する</button>
+    <button onclick="clearForm()">クリア</button>
 
-  </div>  <script>
+    <div class="result" id="result"></div>
+    <div class="burn-guide" id="burnGuide"></div>
+    <div class="bmi-info">
+      <h3>📚 BMIの目安</h3>
+      <ul>
+        <li>BMI 18.5未満：低体重</li>
+        <li>BMI 18.5～24.9：標準</li>
+        <li>BMI 25～29.9：肥満（1度）</li>
+        <li>BMI 30以上：肥満（2度以上）</li>
+      </ul>
+    </div>
+    <div class="log">
+      <h3>📓 摂取＆消費カロリーログ</h3>
+      <label for="logMorning">🍳 朝食</label>
+      <textarea id="logMorning" rows="2"></textarea>
+      <label for="logLunch">🍱 昼食</label>
+      <textarea id="logLunch" rows="2"></textarea>
+      <label for="logDinner">🍛 夕食</label>
+      <textarea id="logDinner" rows="2"></textarea>
+      <label for="logSnack">🍩 間食</label>
+      <textarea id="logSnack" rows="2"></textarea>
+      <label for="logExercise">🏃‍♀️ 運動</label>
+      <textarea id="logExercise" rows="2"></textarea>
+      <button onclick="addLog()">ログを追加</button>
+      <div id="logArea"></div>
+    </div>
+  </div>
+
+  <script>
     function calculate() {
       const weight = parseFloat(document.getElementById("weight").value);
       const height = parseFloat(document.getElementById("height").value);
@@ -184,538 +203,21 @@
       document.getElementById("burnGuide").innerHTML = "";
     }
 
-    <!DOCTYPE html><html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>まいにちダイエットノート</title>
-  <link rel="icon" type="image/png" href="favicon.png">
-  <style>
-    body {
-      font-family: "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
-      background-color: #fff5f8;
-      margin: 0;
-      padding: 20px;
-      color: #444;
+    function addLog() {
+      const morning = document.getElementById("logMorning").value;
+      const lunch = document.getElementById("logLunch").value;
+      const dinner = document.getElementById("logDinner").value;
+      const snack = document.getElementById("logSnack").value;
+      const exercise = document.getElementById("logExercise").value;
+      const log = document.getElementById("logArea");
+      log.innerHTML += `☀️ 朝: ${morning}<br>🍱 昼: ${lunch}<br>🌙 夜: ${dinner}<br>🍩 間食: ${snack}<br>🏃‍♀️ 運動: ${exercise}<br><br>`;
+
+      document.getElementById("logMorning").value = "";
+      document.getElementById("logLunch").value = "";
+      document.getElementById("logDinner").value = "";
+      document.getElementById("logSnack").value = "";
+      document.getElementById("logExercise").value = "";
     }
-    h1 {
-      color: #d6658f;
-      text-align: center;
-    }
-    .container {
-      max-width: 600px;
-      margin: auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-    label {
-      display: block;
-      margin-top: 10px;
-    }
-    input[type="number"], select, textarea {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      box-sizing: border-box;
-    }
-    button {
-      margin-top: 15px;
-      padding: 10px;
-      background-color: #f8a5c2;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      width: 48%;
-    }
-    button:hover {
-      background-color: #e18cab;
-    }
-    .result, .log, .burn-guide, .bmi-info {
-      margin-top: 20px;
-      padding: 15px;
-      background-color: #fff0f5;
-      border-radius: 10px;
-    }
-    .alert {
-      color: red;
-      font-weight: bold;
-      margin-top: 10px;
-    }
-    .icon {
-      font-size: 20px;
-      margin-right: 8px;
-    }
-  </style>
-</head>
-<body>
-  <h1>まいにちダイエットノート</h1>
-  <div class="container">
-    <label for="gender">性別</label>
-    <select id="gender">
-      <option value="female" selected>女性</option>
-      <option value="male">男性</option>
-    </select><label for="height">身長 (cm)</label>
-<input type="number" id="height">
-
-<label for="weight">現在の体重 (kg)</label>
-<input type="number" id="weight">
-
-<label for="targetWeight">目標体重 (kg)</label>
-<input type="number" id="targetWeight">
-
-<label for="days">何日で達成したい？</label>
-<input type="number" id="days">
-
-<label for="activity">生活強度</label>
-<select id="activity">
-  <option value="1.2">低い（座り仕事中心）</option>
-  <option value="1.375">やや低い（軽い運動）</option>
-  <option value="1.55">普通（中程度の運動）</option>
-  <option value="1.725">高い（運動習慣あり）</option>
-  <option value="1.9">非常に高い（ハードトレーニング）</option>
-</select>
-
-<button onclick="calculate()">計算する</button>
-<button onclick="clearForm()">クリア</button>
-
-<div class="result" id="result"></div>
-<div class="burn-guide" id="burnGuide"></div>
-<div class="bmi-info">
-  <h3>📚 BMIの目安</h3>
-  <ul>
-    <li>BMI 18.5未満：低体重</li>
-    <li>BMI 18.5～24.9：標準</li>
-    <li>BMI 25～29.9：肥満（1度）</li>
-    <li>BMI 30以上：肥満（2度以上）</li>
-  </ul>
-</div>
-<div class="log">
-  <h3>📓 摂取＆消費カロリーログ</h3>
-  <label for="logMorning">🍳 朝食</label>
-  <textarea id="logMorning" rows="2"></textarea>
-  <label for="logLunch">🍱 昼食</label>
-  <textarea id="logLunch" rows="2"></textarea>
-  <label for="logDinner">🍛 夕食</label>
-  <textarea id="logDinner" rows="2"></textarea>
-  <label for="logSnack">🍩 間食</label>
-  <textarea id="logSnack" rows="2"></textarea>
-  <label for="logExercise">🏃‍♀️ 運動</label>
-  <textarea id="logExercise" rows="2"></textarea>
-  <button onclick="addLog()">ログを追加</button>
-  <div id="logArea"></div>
-</div>
-
-  </div>  <script>
-    function calculate() {
-      const weight = parseFloat(document.getElementById("weight").value);
-      const height = parseFloat(document.getElementById("height").value);
-      const targetWeight = parseFloat(document.getElementById("targetWeight").value);
-      const days = parseFloat(document.getElementById("days").value);
-      const gender = document.getElementById("gender").value;
-      const activity = parseFloat(document.getElementById("activity").value);
-
-      if (!weight || !height || !targetWeight || !days) {
-        document.getElementById("result").innerHTML = "⚠️ 全ての項目を入力してください。";
-        return;
-      }
-
-      const bmi = (weight / ((height / 100) ** 2)).toFixed(1);
-      const targetBmi = (targetWeight / ((height / 100) ** 2)).toFixed(1);
-
-      let bmr = 0;
-      if (gender === "female") {
-        bmr = 10 * weight + 6.25 * height - 5 * 30 - 161;
-      } else {
-        bmr = 10 * weight + 6.25 * height - 5 * 30 + 5;
-      }
-
-      const tdee = bmr * activity;
-      const caloriePerKg = 7200;
-      const totalDeficit = (weight - targetWeight) * caloriePerKg;
-      const dailyDeficit = (totalDeficit / days).toFixed(0);
-      const recommendedCalories = (tdee - dailyDeficit).toFixed(0);
-
-      let caution = "";
-      if (targetBmi < 18.5) {
-        caution = "<div class='alert'>⚠️ 目標体重は低体重（BMI<18.5）になります。無理のない目標にしましょう。</div>";
-      } else if ((weight - targetWeight) / weight > 0.1 && days < 30) {
-        caution = "<div class='alert'>⚠️ 1ヶ月未満で体重の10%以上の減量は危険です！</div>";
-      }
-
-      const cake = (dailyDeficit / 350).toFixed(1);
-      const croissant = (dailyDeficit / 200).toFixed(1);
-      const chips = (dailyDeficit / 330).toFixed(1);
-      const oil = (dailyDeficit / 110).toFixed(1);
-
-      const walk = (dailyDeficit / 100 * 30).toFixed(0);
-      const jog = (dailyDeficit / 240 * 30).toFixed(0);
-      const swim = (dailyDeficit / 300 * 30).toFixed(0);
-
-      document.getElementById("result").innerHTML =
-        `📏 現在のBMI: ${bmi}<br>
-         🎯 目標BMI: ${targetBmi}<br>
-         🔥 達成に必要な総消費カロリー: ${totalDeficit.toFixed(0)} kcal<br>
-         📆 毎日削減するカロリー目安: ${dailyDeficit} kcal<br>
-         🍽️ 毎日の摂取カロリー目安: ${recommendedCalories} kcal
-         ${caution}`;
-
-      document.getElementById("burnGuide").innerHTML =
-        `<strong>🍰 ${dailyDeficit}kcal減らすには？</strong><br>
-         ・ショートケーキ ${cake}個分<br>
-         ・クロワッサン ${croissant}個分<br>
-         ・ポテチ ${chips}袋分（60g）<br>
-         ・油 大さじ${oil}杯分<br><br>
-         <strong>🏃‍♀️ 運動で消費するには？</strong><br>
-         ・ウォーキング ${walk}分<br>
-         ・ジョギング ${jog}分<br>
-         ・水泳 ${swim}分`;
-    }
-
-    function clearForm() {
-      document.getElementById("weight").value = "";
-      document.getElementById("height").value = "";
-      document.getElementById("targetWeight").value = "";
-      document.getElementById("days").value = "";
-      document.getElementById("result").innerHTML = "";
-      document.getElementById("burnGuide").innerHTML = "";
-    }
-
-<!DOCTYPE html><html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>まいにちダイエットノート</title>
-  <link rel="icon" type="image/png" href="favicon.png">
-  <style>
-    body {
-      font-family: "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
-      background-color: #fff5f8;
-      margin: 0;
-      padding: 20px;
-      color: #444;
-    }
-    h1 {
-      color: #d6658f;
-      text-align: center;
-    }
-    .container {
-      max-width: 600px;
-      margin: auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-    label {
-      display: block;
-      margin-top: 10px;
-    }
-    input[type="number"], select, textarea {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      box-sizing: border-box;
-    }
-    button {
-      margin-top: 15px;
-      padding: 10px;
-      background-color: #f8a5c2;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      width: 48%;
-    }
-    button:hover {
-      background-color: #e18cab;
-    }
-    .result, .log, .burn-guide, .bmi-info {
-      margin-top: 20px;
-      padding: 15px;
-      background-color: #fff0f5;
-      border-radius: 10px;
-    }
-    .alert {
-      color: red;
-      font-weight: bold;
-      margin-top: 10px;
-    }
-    .icon {
-      font-size: 20px;
-      margin-right: 8px;
-    }
-  </style>
-</head>
-<body>
-  <h1>まいにちダイエットノート</h1>
-  <div class="container">
-    <label for="gender">性別</label>
-    <select id="gender">
-      <option value="female" selected>女性</option>
-      <option value="male">男性</option>
-    </select><label for="height">身長 (cm)</label>
-<input type="number" id="height">
-
-<label for="weight">現在の体重 (kg)</label>
-<input type="number" id="weight">
-
-<label for="targetWeight">目標体重 (kg)</label>
-<input type="number" id="targetWeight">
-
-<label for="days">何日で達成したい？</label>
-<input type="number" id="days">
-
-<label for="activity">生活強度</label>
-<select id="activity">
-  <option value="1.2">低い（座り仕事中心）</option>
-  <option value="1.375">やや低い（軽い運動）</option>
-  <option value="1.55">普通（中程度の運動）</option>
-  <option value="1.725">高い（運動習慣あり）</option>
-  <option value="1.9">非常に高い（ハードトレーニング）</option>
-</select>
-
-<button onclick="calculate()">計算する</button>
-<button onclick="clearForm()">クリア</button>
-
-<div class="result" id="result"></div>
-<div class="burn-guide" id="burnGuide"></div>
-<div class="bmi-info">
-  <h3>📚 BMIの目安</h3>
-  <ul>
-    <li>BMI 18.5未満：低体重</li>
-    <li>BMI 18.5～24.9：標準</li>
-    <li>BMI 25～29.9：肥満（1度）</li>
-    <li>BMI 30以上：肥満（2度以上）</li>
-  </ul>
-</div>
-<div class="log">
-  <h3>📓 摂取＆消費カロリーログ</h3>
-  <label for="logMorning">🍳 朝食</label>
-  <textarea id="logMorning" rows="2"></textarea>
-  <label for="logLunch">🍱 昼食</label>
-  <textarea id="logLunch" rows="2"></textarea>
-  <label for="logDinner">🍛 夕食</label>
-  <textarea id="logDinner" rows="2"></textarea>
-  <label for="logSnack">🍩 間食</label>
-  <textarea id="logSnack" rows="2"></textarea>
-  <label for="logExercise">🏃‍♀️ 運動</label>
-  <textarea id="logExercise" rows="2"></textarea>
-  <button onclick="addLog()">ログを追加</button>
-  <div id="logArea"></div>
-</div>
-
-  </div>  <script>
-    function calculate() {
-      const weight = parseFloat(document.getElementById("weight").value);
-      const height = parseFloat(document.getElementById("height").value);
-      const targetWeight = parseFloat(document.getElementById("targetWeight").value);
-      const days = parseFloat(document.getElementById("days").value);
-      const gender = document.getElementById("gender").value;
-      const activity = parseFloat(document.getElementById("activity").value);
-
-      if (!weight || !height || !targetWeight || !days) {
-        document.getElementById("result").innerHTML = "⚠️ 全ての項目を入力してください。";
-        return;
-      }
-
-      const bmi = (weight / ((height / 100) ** 2)).toFixed(1);
-      const targetBmi = (targetWeight / ((height / 100) ** 2)).toFixed(1);
-
-      let bmr = 0;
-      if (gender === "female") {
-        bmr = 10 * weight + 6.25 * height - 5 * 30 - 161;
-      } else {
-        bmr = 10 * weight + 6.25 * height - 5 * 30 + 5;
-      }
-
-      const tdee = bmr * activity;
-      const caloriePerKg = 7200;
-      const totalDeficit = (weight - targetWeight) * caloriePerKg;
-      const dailyDeficit = (totalDeficit / days).toFixed(0);
-      const recommendedCalories = (tdee - dailyDeficit).toFixed(0);
-
-      let caution = "";
-      if (targetBmi < 18.5) {
-        caution = "<div class='alert'>⚠️ 目標体重は低体重（BMI<18.5）になります。無理のない目標にしましょう。</div>";
-      } else if ((weight - targetWeight) / weight > 0.1 && days < 30) {
-        caution = "<div class='alert'>⚠️ 1ヶ月未満で体重の10%以上の減量は危険です！</div>";
-      }
-
-      const cake = (dailyDeficit / 350).toFixed(1);
-      const croissant = (dailyDeficit / 200).toFixed(1);
-      const chips = (dailyDeficit / 330).toFixed(1);
-      const oil = (dailyDeficit / 110).toFixed(1);
-
-      const walk = (dailyDeficit / 100 * 30).toFixed(0);
-      const jog = (dailyDeficit / 240 * 30).toFixed(0);
-      const swim = (dailyDeficit / 300 * 30).toFixed(0);
-
-      document.getElementById("result").innerHTML =
-        `📏 現在のBMI: ${bmi}<br>
-         🎯 目標BMI: ${targetBmi}<br>
-         🔥 達成に必要な総消費カロリー: ${totalDeficit.toFixed(0)} kcal<br>
-         📆 毎日削減するカロリー目安: ${dailyDeficit} kcal<br>
-         🍽️ 毎日の摂取カロリー目安: ${recommendedCalories} kcal
-         ${caution}`;
-
-      document.getElementById("burnGuide").innerHTML =
-        `<strong>🍰 ${dailyDeficit}kcal減らすには？</strong><br>
-         ・ショートケーキ ${cake}個分<br>
-         ・クロワッサン ${croissant}個分<br>
-         ・ポテチ ${chips}袋分（60g）<br>
-         ・油 大さじ${oil}杯分<br><br>
-         <strong>🏃‍♀️ 運動で消費するには？</strong><br>
-         ・ウォーキング ${walk}分<br>
-         ・ジョギング ${jog}分<br>
-         ・水泳 ${swim}分`;
-    }
-
-    function clearForm() {
-      document.getElementById("weight").value = "";
-      document.getElementById("height").value = "";
-      document.getElementById("targetWeight").value = "";
-      document.getElementById("days").value = "";
-      document.getElementById("result").innerHTML = "";
-      document.getElementById("burnGuide").innerHTML = "";
-    }
-  </script><!-- ログ入力セクション -->
-<div class="log-section">
-  <h2>🥗 毎日の摂取＆消費ログ</h2>
-  <label for="logDate">📅 日付:</label>
-  <input type="date" id="logDate" />
-
-  <label for="logMorning">🍳 朝食:</label>
-  <input type="text" id="logMorning" />
-
-  <label for="logLunch">🍱 昼食:</label>
-  <input type="text" id="logLunch" />
-
-  <label for="logDinner">🍽️ 夕食:</label>
-  <input type="text" id="logDinner" />
-
-  <label for="logSnack">🍩 間食:</label>
-  <input type="text" id="logSnack" />
-
-  <label for="logExercise">🏃‍♀️ 運動:</label>
-  <input type="text" id="logExercise" />
-
-  <button onclick="saveLog()">💾 保存</button>
-  <button onclick="loadLog()">📂 読み込み</button>
-  <button onclick="clearLog()">🗑️ 削除</button>
-
-  <div id="savedLogDisplay"></div>
-</div>
-
-<script>
-  // 今日の日付をセット
-  document.getElementById("logDate").valueAsDate = new Date();
-
-  function saveLog() {
-    const date = document.getElementById("logDate").value;
-    const morning = document.getElementById("logMorning").value;
-    const lunch = document.getElementById("logLunch").value;
-    const dinner = document.getElementById("logDinner").value;
-    const snack = document.getElementById("logSnack").value;
-    const exercise = document.getElementById("logExercise").value;
-
-    const logData = {
-      morning,
-      lunch,
-      dinner,
-      snack,
-      exercise
-    };
-
-    localStorage.setItem("dietLog_" + date, JSON.stringify(logData));
-    alert("保存しました！");
-    loadLog();
-  }
-
-  function loadLog() {
-    const date = document.getElementById("logDate").value;
-    const saved = localStorage.getItem("dietLog_" + date);
-    if (saved) {
-      const log = JSON.parse(saved);
-      document.getElementById("logMorning").value = log.morning;
-      document.getElementById("logLunch").value = log.lunch;
-      document.getElementById("logDinner").value = log.dinner;
-      document.getElementById("logSnack").value = log.snack;
-      document.getElementById("logExercise").value = log.exercise;
-
-      document.getElementById("savedLogDisplay").innerHTML =
-        `<p><strong>${date}</strong></p>
-         <p>🍳 朝: ${log.morning}</p>
-         <p>🍱 昼: ${log.lunch}</p>
-         <p>🍽️ 夜: ${log.dinner}</p>
-         <p>🍩 間食: ${log.snack}</p>
-         <p>🏃‍♀️ 運動: ${log.exercise}</p><hr>`;
-    } else {
-      alert("保存されたログがありません");
-    }
-  }
-
-  function clearLog() {
-    const date = document.getElementById("logDate").value;
-    localStorage.removeItem("dietLog_" + date);
-    document.getElementById("savedLogDisplay").innerHTML = "";
-    alert("削除しました");
-  }
-</script>
-
-<style>
-  .log-section {
-    margin-top: 40px;
-    background-color: #fffafc;
-    padding: 20px;
-    border-radius: 16px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.05);
-    font-family: "Arial", sans-serif;
-  }
-  .log-section h2 {
-    color: #c97fa6;
-  }
-  .log-section label {
-    display: block;
-    margin-top: 10px;
-    font-weight: bold;
-  }
-  .log-section input[type="text"],
-  .log-section input[type="date"] {
-    width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-  }
-  .log-section button {
-    margin-top: 15px;
-    margin-right: 10px;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 8px;
-    background-color: #f5a3c1;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  .log-section button:hover {
-    background-color: #e48db0;
-  }
-  #savedLogDisplay {
-    margin-top: 20px;
-    font-size: 14px;
-    background-color: #fff0f5;
-    padding: 10px;
-    border-radius: 12px;
-  }
-</style>
+  </script>
 </body>
 </html>
