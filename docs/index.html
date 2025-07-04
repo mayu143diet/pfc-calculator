@@ -1,4 +1,24 @@
-<script>
+<!-- 入力フォーム --><div class="form">
+  <label for="gender">性別：</label>
+  <select id="gender">
+    <option value="female" selected>女性</option>
+    <option value="male">男性</option>
+  </select><br><label for="height">身長（cm）：</label> <input type="number" id="height"><br>
+
+<label for="weight">体重（kg）：</label> <input type="number" id="weight"><br>
+
+<label for="activity">活動量：</label> <select id="activity"> <option value="1.2">ほぼ動かない</option> <option value="1.375">軽い運動（週1〜3回）</option> <option value="1.55">中程度の運動（週3〜5回）</option> <option value="1.725">激しい運動（週6〜7回）</option> <option value="1.9">非常に激しい運動（1日2回など）</option> </select><br>
+
+<label for="targetWeight">目標体重（kg）：</label> <input type="number" id="targetWeight"><br>
+
+<label for="days">目標達成日数（日）：</label> <input type="number" id="days"><br><br>
+
+</div><!-- ボタン --><div class="button-group">
+  <button onclick="calculateAll()">計算する</button>
+  <button onclick="clearInputs()">クリア</button>
+</div><!-- 結果表示エリア --><div id="result"></div>
+<div id="burnResult">計算後にここに表示されます。</div>
+<div id="logResult"></div><script>
 function calculateAll() {
   const gender = document.getElementById("gender").value;
   const height = parseFloat(document.getElementById("height").value);
@@ -68,9 +88,4 @@ function clearInputs() {
   document.getElementById("burnResult").innerHTML = "計算後にここに表示されます。";
   document.getElementById("logResult").innerHTML = "";
 }
-</script><!-- HTMLのボタン例 --><div class="button-group">
-  <button onclick="calculateAll()">計算する</button>
-  <button onclick="clearInputs()">クリア</button>
-</div><!-- 結果表示用のエリア --><div id="result"></div>
-<div id="burnResult">計算後にここに表示されます。</div>
-<div id="logResult"></div>
+</script>
