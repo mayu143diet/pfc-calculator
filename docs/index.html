@@ -80,6 +80,129 @@
       </div>
     </section>
 
+    <!-- === 食品換算ガイド（PFC→食品量） =============================== -->
+<section class="card" id="foodConvertCard">
+  <div class="tag">食品換算ガイド</div>
+  <p class="muted small">下の値は計算結果のPFCを自動参照できます。手動で上書きもOK。</p>
+
+  <div class="row">
+    <div>
+      <label for="needProtein">たんぱく質 目安 (g/日)</label>
+      <input type="number" id="needProtein" inputmode="decimal" placeholder="例）80">
+    </div>
+    <div>
+      <label for="needCarb">炭水化物 目安 (g/日)</label>
+      <input type="number" id="needCarb" inputmode="decimal" placeholder="例）220">
+    </div>
+  </div>
+  <div class="row">
+    <div>
+      <label for="needFat">脂質 目安 (g/日)</label>
+      <input type="number" id="needFat" inputmode="decimal" placeholder="例）50">
+    </div>
+    <div class="btns">
+      <button id="fillFromCalcBtn" type="button">計算結果を反映</button>
+      <button class="secondary" id="convertBtn" type="button">食品量に変換</button>
+    </div>
+  </div>
+
+  <div class="box small" id="convertOutProtein" style="margin-top:10px"></div>
+  <div class="box small" id="convertOutCarb" style="margin-top:10px"></div>
+  <div class="box small" id="convertOutFat" style="margin-top:10px"></div>
+</section>
+
+<script>
+  /* --- 100gあたり or 1単位あたりのPFC定義（概算目安）--- 
+     単位が100gでないもの（卵・油など）は unitGrams を設定してあります。 */
+  const FOOD_DB = {
+    protein: [
+      { name: "鶏むね（皮なし・生）", per100: { P:23.3, F:1.9, C:0 }, unitGrams: 100 },
+      { name: "ツナ水煮（ノンオイル）", per100: { P:19.8, F:0.7, C:0 }, unitGrams: 100 },
+      { name: "木綿とうふ", per100: { P:7.0, F:4.9, C:1.7 }, unitGrams: 100 },
+      { name: "ギリシャヨーグルト", per100: { P:10.0, F:0.4, C:4.0 }, unitGrams: 100 },
+      { name: "卵（M1個≈50g）", per100: { P:12.3, F:10.3, C:0.3 }, unitGrams: 50 } // 1個=50g想定
+    ],
+    carb: [
+      { name: "白米（ごはん・100g）", per100: { P:2.5, F:0.3, C:36.8 }, unitGrams: 100 },
+      { name: "うどん（ゆで）",       per100: { P:2.6, F:0.4, C:21.0 }, unitGrams: 100 },
+      { name: "パスタ（ゆで）",       per100: { P:5.0, F:1.4, C:31.0 }, unitGrams: 100 },
+      { name: "オートミール（乾）",   per100: { P:16.9,F:6.9, C:66.0 }, unitGrams: 100 },
+      { name: "食パン（1枚=6枚切り≈60g）", per100:{ P:9.0,F:5.0, C:48.0 }, unitGrams: 60 } // 銘柄で差あり・目安
+    ],
+    fat: [
+      { name: "オリーブオイル（大さじ1=約13.6g）", per100: { P:0, F:100, C:0 }, unitGrams: 13.6 },
+      { name: "アーモンド", per100: { P:20.3, F:54.1, C:20.9 }, unitGrams: 100 },
+      { name: "くるみ",     per100: { P:14.6, F:68.8, C:11.7 }, unitGrams: 100 }
+    ]
+  };
+
+  function gramsNeededFor(target, per100) {
+    if (per100 <= 0) return null;
+    // 100gあたりX(g) → 目標[g]に必要な重量[g]
+    return (target / per100) * 100;
+  }
+
+  function portionLine(dbList, macroKey, target, options = {}) {
+    if (!target || target <= 0) return "";
+    const lines = dbList.map(item => {
+      const per100 = item.per100[macroKey] || 0;
+      const grams = gramsNeededFor(target, per100);
+      if (!grams) return null;
+
+      // 単位表示（卵=個、油=大さじ など）
+      let disp;
+      if (item.name.includes("卵") && item.unitGrams === 50) {
+        const eggs = grams / 50;
+        disp = `${eggs.toFixed(1)} 個（約${Math.round(grams)}g）`;
+      } else if (item.name.includes("オリーブオイル") && item.unitGrams === 13.6) {
+        const tbsp = grams / 13.6;
+        disp = `大さじ ${tbsp.toFixed(1)}（約${Math.round(grams)}g）`;
+      } else if (item.name.includes("食パン") && item.unitGrams === 60) {
+        const slices = grams / 60;
+        disp = `${slices.toFixed(1)} 枚（約${Math.round(grams)}g）`;
+      } else {
+        disp = `${Math.round(grams)} g`;
+      }
+      return `・${item.name} → <b>${disp}</b>`;
+    }).filter(Boolean);
+    return lines.slice(0, options.limit || 5).join("<br>");
+  }
+
+  function fillFromCalc() {
+    // 既存の計算結果（pfcLine）から数値を拾う
+    const line = document.getElementById("pfcLine")?.textContent || "";
+    // 「たんぱく質 128 g／脂質 56 g／炭水化物 220 g」みたいな文字列想定
+    const num = (label) => {
+      const m = line.match(new RegExp(label+"\\s*(\\d+[\\.,]?\\d*)\\s*g"));
+      return m ? parseFloat(m[1]) : null;
+    };
+    const P = num("たんぱく質") || "";
+    const F = num("脂質") || "";
+    const C = num("炭水化物") || "";
+    if (P) document.getElementById("needProtein").value = P;
+    if (C) document.getElementById("needCarb").value = C;
+    if (F) document.getElementById("needFat").value = F;
+    if (!P && !C && !F) alert("先に『計算する』を押してPFCを出すか、手入力してください。");
+  }
+
+  function convertToFood() {
+    const P = parseFloat(document.getElementById("needProtein").value);
+    const C = parseFloat(document.getElementById("needCarb").value);
+    const F = parseFloat(document.getElementById("needFat").value);
+
+    const outP = portionLine(FOOD_DB.protein, "P", P, { limit: 4 });
+    const outC = portionLine(FOOD_DB.carb,    "C", C, { limit: 4 });
+    const outF = portionLine(FOOD_DB.fat,     "F", F, { limit: 3 });
+
+    document.getElementById("convertOutProtein").innerHTML = `<b>たんぱく質 ${isNaN(P)? "-" : P}g をこう置き換えると…</b><br>${outP || "（入力が空です）"}`;
+    document.getElementById("convertOutCarb").innerHTML    = `<b>炭水化物 ${isNaN(C)? "-" : C}g をこう置き換えると…</b><br>${outC || "（入力が空です）"}`;
+    document.getElementById("convertOutFat").innerHTML     = `<b>脂質 ${isNaN(F)? "-" : F}g をこう置き換えると…</b><br>${outF || "（入力が空です）"}`;
+  }
+
+  // ボタン連携
+  document.getElementById("fillFromCalcBtn").addEventListener("click", fillFromCalc);
+  document.getElementById("convertBtn").addEventListener("click", convertToFood);
+</script>
     <!-- 結果カード -->
     <section class="card result" id="resultCard" hidden>
       <div class="tag">結果</div>
