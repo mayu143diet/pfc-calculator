@@ -1,223 +1,329 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>まいにちダイエットノート</title>
-  <link rel="icon" type="image/png" href="favicon.png">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>まいにちダイエットノート – PFC & BMI 計算＋ログ</title>
+  <link rel="icon" href="favicon.png" type="image/png" />
   <style>
-    body {
-      font-family: "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
-      background-color: #fff5f8;
-      margin: 0;
-      padding: 20px;
-      color: #444;
+    :root{
+      --bg:#fff5f8; --card:#ffffff; --accent:#f8a5c2; --accent-2:#f78fb3;
+      --ink:#444; --muted:#777; --shadow:0 6px 20px rgba(0,0,0,.06);
+      --radius:16px; --radius-sm:12px;
     }
-    h1 {
-      color: #d6658f;
-      text-align: center;
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Kaku Gothic ProN",Meiryo,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;line-height:1.7}
+    .wrap{max-width:720px;margin:auto;padding:24px}
+    h1{margin:8px 0 16px;font-size:1.6rem;color:#d6658f;text-align:center}
+    .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin:14px 0}
+    label{display:block;font-weight:600;margin-top:10px}
+    input,select,textarea{
+      width:100%;padding:12px 12px;border:1px solid #e7dfe4;border-radius:14px;background:#fff;font-size:16px
     }
-    .container {
-      max-width: 600px;
-      margin: auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media (max-width:540px){.row{grid-template-columns:1fr}}
+    .btns{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
+    button{
+      appearance:none;border:0;border-radius:999px;padding:12px 16px;font-weight:700;cursor:pointer;flex:1;min-width:130px;
+      background:var(--accent);color:#fff
     }
-    label {
-      display: block;
-      margin-top: 10px;
-    }
-    input[type="number"], select, textarea {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      box-sizing: border-box;
-    }
-    button {
-      margin-top: 15px;
-      padding: 10px;
-      background-color: #f8a5c2;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      width: 48%;
-    }
-    button:hover {
-      background-color: #e18cab;
-    }
-    .result, .log, .burn-guide, .bmi-info {
-      margin-top: 20px;
-      padding: 15px;
-      background-color: #fff0f5;
-      border-radius: 10px;
-    }
-    .alert {
-      color: red;
-      font-weight: bold;
-      margin-top: 10px;
-    }
-    .icon {
-      font-size: 20px;
-      margin-right: 8px;
-    }
+    button.secondary{background:#ffe3ec;color:#b35b7b}
+    button:hover{background:var(--accent-2)}
+    .result h3{margin:.2rem 0 .6rem}
+    .muted{color:var(--muted);font-size:.95rem}
+    .alert{margin-top:10px;color:#d8000c;font-weight:700}
+    .box{background:#fff0f5;border-radius:var(--radius-sm);padding:14px}
+    .list{margin:.3rem 0 0;padding-left:1.1rem}
+    .list li{margin:.2rem 0}
+    .small{font-size:.92rem}
+    .tag{display:inline-block;background:#ffe7f0;color:#b14d72;border-radius:999px;padding:4px 10px;font-weight:700;font-size:.86rem;margin-right:6px}
+    .right{display:flex;gap:8px;align-items:center;justify-content:flex-end}
   </style>
 </head>
 <body>
-  <h1>まいにちダイエットノート</h1>
-  <div class="container">
-    <label for="gender">性別</label>
-    <select id="gender">
-      <option value="female" selected>女性</option>
-      <option value="male">男性</option>
-    </select>
+  <div class="wrap">
+    <h1>まいにちダイエットノート</h1>
 
-    <label for="height">身長 (cm)</label>
-    <input type="number" id="height">
+    <!-- 入力カード -->
+    <section class="card" id="formCard">
+      <div class="tag">入力</div>
+      <label for="gender">性別</label>
+      <select id="gender">
+        <option value="female" selected>女性</option>
+        <option value="male">男性</option>
+      </select>
 
-    <label for="weight">現在の体重 (kg)</label>
-    <input type="number" id="weight">
+      <label for="height">身長 (cm)</label>
+      <input type="number" id="height" inputmode="decimal" placeholder="例）160">
 
-    <label for="targetWeight">目標体重 (kg)</label>
-    <input type="number" id="targetWeight">
+      <label for="weight">現在の体重 (kg)</label>
+      <input type="number" id="weight" inputmode="decimal" placeholder="例）58.5">
 
-    <label for="days">何日で達成したい？</label>
-    <input type="number" id="days">
+      <label for="targetWeight">目標体重 (kg)</label>
+      <input type="number" id="targetWeight" inputmode="decimal" placeholder="例）54">
 
-    <label for="activity">生活強度</label>
-    <select id="activity">
-      <option value="1.2">低い（座り仕事中心）</option>
-      <option value="1.375">やや低い（軽い運動）</option>
-      <option value="1.55">普通（中程度の運動）</option>
-      <option value="1.725">高い（運動習慣あり）</option>
-      <option value="1.9">非常に高い（ハードトレーニング）</option>
-    </select>
+      <label for="days">目標までの日数</label>
+      <input type="number" id="days" inputmode="numeric" placeholder="例）60">
 
-    <button onclick="calculate()">計算する</button>
-    <button onclick="clearForm()">クリア</button>
+      <label for="activity">生活強度</label>
+      <select id="activity">
+        <option value="1.2">低い（座り仕事中心）</option>
+        <option value="1.375">やや低い（軽い運動）</option>
+        <option value="1.55" selected>普通（中程度の運動）</option>
+        <option value="1.725">高い（運動習慣あり）</option>
+        <option value="1.9">非常に高い（ハードトレーニング）</option>
+      </select>
 
-    <div class="result" id="result"></div>
-    <div class="burn-guide" id="burnGuide"></div>
-    <div class="bmi-info">
-      <h3>📚 BMIの目安</h3>
-      <ul>
-        <li>BMI 18.5未満：低体重</li>
-        <li>BMI 18.5～24.9：標準</li>
-        <li>BMI 25～29.9：肥満（1度）</li>
-        <li>BMI 30以上：肥満（2度以上）</li>
+      <div class="btns">
+        <button id="calcBtn">計算する</button>
+        <button class="secondary" id="clearBtn">クリア</button>
+      </div>
+    </section>
+
+    <!-- 結果カード -->
+    <section class="card result" id="resultCard" hidden>
+      <div class="tag">結果</div>
+      <div class="box">
+        <h3>体格 & 目標</h3>
+        <div id="bmiLine" class="small"></div>
+        <div id="targetBmiLine" class="small"></div>
+        <div id="tdeeLine" class="small" style="margin-top:.4rem"></div>
+      </div>
+
+      <div class="box" style="margin-top:10px">
+        <h3>PFCバランス（1日・g）</h3>
+        <div id="pfcLine" class="small"></div>
+        <div class="muted">※目安：P=体重×1.6、脂質=総カロリーの25%、残りを炭水化物</div>
+      </div>
+
+      <div class="box" style="margin-top:10px">
+        <h3>目標へ向けたカロリー設計</h3>
+        <div id="goalCalLines" class="small"></div>
+        <div id="caution" class="alert"></div>
+      </div>
+
+      <div class="box" style="margin-top:10px">
+        <h3>「◯kcal 減らすには？」早見</h3>
+        <div id="equivFood" class="small"></div>
+        <div id="equivMove" class="small" style="margin-top:.4rem"></div>
+        <div class="muted">※食べ物は一般的な目安、運動は体重50kgの概算。</div>
+      </div>
+    </section>
+
+    <!-- BMI目安 -->
+    <section class="card">
+      <div class="tag">BMI 目安</div>
+      <ul class="list small">
+        <li>18.5 未満：低体重</li>
+        <li>18.5–24.9：普通体重</li>
+        <li>25.0–29.9：肥満（1度）</li>
+        <li>30.0–34.9：肥満（2度） / 35.0–39.9：肥満（3度） / 40以上：肥満（4度）</li>
       </ul>
-    </div>
-    <div class="log">
-      <h3>📓 摂取＆消費カロリーログ</h3>
-      <label for="logMorning">🍳 朝食</label>
-      <textarea id="logMorning" rows="2"></textarea>
-      <label for="logLunch">🍱 昼食</label>
-      <textarea id="logLunch" rows="2"></textarea>
-      <label for="logDinner">🍛 夕食</label>
-      <textarea id="logDinner" rows="2"></textarea>
-      <label for="logSnack">🍩 間食</label>
-      <textarea id="logSnack" rows="2"></textarea>
+    </section>
+
+    <!-- 日付つきログ -->
+    <section class="card" id="logCard">
+      <div class="tag">毎日のログ</div>
+      <label for="logDate">📅 日付</label>
+      <input type="date" id="logDate">
+
+      <div class="row" style="margin-top:6px">
+        <div>
+          <label for="logMorning">🍳 朝</label>
+          <textarea id="logMorning" rows="2" placeholder="例）オートミール＋ヨーグルト 300kcal"></textarea>
+        </div>
+        <div>
+          <label for="logLunch">🍱 昼</label>
+          <textarea id="logLunch" rows="2" placeholder="例）お弁当 500kcal"></textarea>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label for="logDinner">🍽️ 夜</label>
+          <textarea id="logDinner" rows="2" placeholder="例）ごはん半分＋鶏むね 450kcal"></textarea>
+        </div>
+        <div>
+          <label for="logSnack">🍩 間食</label>
+          <textarea id="logSnack" rows="2" placeholder="例）甘栗 150kcal"></textarea>
+        </div>
+      </div>
       <label for="logExercise">🏃‍♀️ 運動</label>
-      <textarea id="logExercise" rows="2"></textarea>
-      <button onclick="addLog()">ログを追加</button>
-      <div id="logArea"></div>
-    </div>
+      <textarea id="logExercise" rows="2" placeholder="例）ウォーキング30分 100kcal"></textarea>
+
+      <div class="btns">
+        <button id="saveLogBtn">💾 保存</button>
+        <button class="secondary" id="loadLogBtn">📂 読み込み</button>
+        <button class="secondary" id="delLogBtn">🗑️ 削除</button>
+      </div>
+
+      <div class="box small" id="savedLogDisplay" style="margin-top:8px"></div>
+    </section>
+
+    <div class="right muted small">© まゆ / もちまゆ – ゆるっと続けるダイエット</div>
   </div>
 
   <script>
-    function calculate() {
-      const weight = parseFloat(document.getElementById("weight").value);
-      const height = parseFloat(document.getElementById("height").value);
-      const targetWeight = parseFloat(document.getElementById("targetWeight").value);
-      const days = parseFloat(document.getElementById("days").value);
-      const gender = document.getElementById("gender").value;
-      const activity = parseFloat(document.getElementById("activity").value);
+    // ===== Utils =====
+    const el = id => document.getElementById(id);
+    const fmt = n => Number(n).toLocaleString("ja-JP");
 
-      if (!weight || !height || !targetWeight || !days) {
-        document.getElementById("result").innerHTML = "⚠️ 全ての項目を入力してください。";
+    // デフォルト日付
+    (() => { try { el("logDate").valueAsDate = new Date(); } catch(_){} })();
+
+    // ===== 計算ロジック =====
+    function calcAll() {
+      const gender = el("gender").value;
+      const h = parseFloat(el("height").value);
+      const w = parseFloat(el("weight").value);
+      const tw = parseFloat(el("targetWeight").value);
+      const days = parseFloat(el("days").value);
+      const act = parseFloat(el("activity").value);
+
+      if ([h,w,tw,days,act].some(v => !v || isNaN(v))) {
+        alert("すべての入力欄を埋めてください。");
         return;
       }
 
-      const bmi = (weight / ((height / 100) ** 2)).toFixed(1);
-      const targetBmi = (targetWeight / ((height / 100) ** 2)).toFixed(1);
+      // BMI
+      const bmi = w / ((h/100)**2);
+      const tBmi = tw / ((h/100)**2);
 
-      let bmr = 0;
-      if (gender === "female") {
-        bmr = 10 * weight + 6.25 * height - 5 * 30 - 161;
-      } else {
-        bmr = 10 * weight + 6.25 * height - 5 * 30 + 5;
+      // BMR（Mifflin-St Jeor、年齢は入力がないので30歳仮定）
+      const bmr = gender === "male"
+        ? 10*w + 6.25*h - 5*30 + 5
+        : 10*w + 6.25*h - 5*30 - 161;
+
+      // TDEE
+      const tdee = bmr * act;
+
+      // 目標差分
+      const kcalPerKg = 7200; // 体脂肪1kg ≒ 7200kcal
+      const totalDef = (w - tw) * kcalPerKg; // 目標までに必要な総差分（減量時は正）
+      const dailyDef = totalDef / days;      // 1日の差分
+      const recIntake = tdee - dailyDef;     // 目標達成に向けた1日摂取目安
+
+      // PFC（たんぱく=体重×1.6g、脂質=25%、残りを炭水化物）
+      const p = Math.max(0, w * 1.6);
+      const fatG = Math.max(0, (tdee * 0.25) / 9);
+      const carbG = Math.max(0, (tdee - (p*4 + fatG*9)) / 4);
+
+      // CAUTION
+      let cautionMsg = "";
+      const monthlyRate = ( (w - tw) / w ) / (days/30); // 1か月あたりの割合
+      if (tBmi < 18.5) {
+        cautionMsg = "⚠️ 目標BMIが18.5未満です。無理のない目標に調整してね。";
+      } else if (monthlyRate > 0.10) {
+        cautionMsg = "⚠️ 1か月に体重の10％超の減量ペースになっています。安全第一でいこう！";
       }
 
-      const tdee = bmr * activity;
-      const caloriePerKg = 7200;
-      const totalDeficit = (weight - targetWeight) * caloriePerKg;
-      const dailyDeficit = (totalDeficit / days).toFixed(0);
-      const recommendedCalories = (tdee - dailyDeficit).toFixed(0);
+      // 出力
+      el("resultCard").hidden = false;
+      el("bmiLine").innerHTML = `📏 現在BMI：<b>${bmi.toFixed(1)}</b>`;
+      el("targetBmiLine").innerHTML = `🎯 目標BMI：<b>${tBmi.toFixed(1)}</b>`;
+      el("tdeeLine").innerHTML = `🔥 1日に必要なカロリー（TDEE）：<b>${fmt(tdee.toFixed(0))} kcal</b>`;
 
-      let caution = "";
-      if (targetBmi < 18.5) {
-        caution = "<div class='alert'>⚠️ 目標体重は低体重（BMI<18.5）になります。無理のない目標にしましょう。</div>";
-      } else if ((weight - targetWeight) / weight > 0.1 && days < 30) {
-        caution = "<div class='alert'>⚠️ 1ヶ月未満で体重の10%以上の減量は危険です！</div>";
-      }
+      el("pfcLine").innerHTML =
+        `たんぱく質 <b>${fmt(p.toFixed(0))} g</b>／脂質 <b>${fmt(fatG.toFixed(0))} g</b>／炭水化物 <b>${fmt(carbG.toFixed(0))} g</b>`;
 
-      const cake = (dailyDeficit / 350).toFixed(1);
-      const croissant = (dailyDeficit / 200).toFixed(1);
-      const chips = (dailyDeficit / 330).toFixed(1);
-      const oil = (dailyDeficit / 110).toFixed(1);
+      el("goalCalLines").innerHTML =
+        `総差分（目標まで）：<b>${fmt(totalDef.toFixed(0))} kcal</b><br>` +
+        `1日あたりの削減目安：<b>${fmt(dailyDef.toFixed(0))} kcal</b><br>` +
+        `目標に向けた毎日の摂取カロリー目安：<b>${fmt(recIntake.toFixed(0))} kcal</b>`;
 
-      const walk = (dailyDeficit / 100 * 30).toFixed(0);
-      const jog = (dailyDeficit / 240 * 30).toFixed(0);
-      const swim = (dailyDeficit / 300 * 30).toFixed(0);
+      el("caution").textContent = cautionMsg || "";
 
-      document.getElementById("result").innerHTML =
-        `📏 現在のBMI: ${bmi}<br>
-         🎯 目標BMI: ${targetBmi}<br>
-         🔥 達成に必要な総消費カロリー: ${totalDeficit.toFixed(0)} kcal<br>
-         📆 毎日削減するカロリー目安: ${dailyDeficit} kcal<br>
-         🍽️ 毎日の摂取カロリー目安: ${recommendedCalories} kcal
-         ${caution}`;
+      // ◯kcal減らすには？（food/move equivalence）
+      const dd = Math.max(0, dailyDef);
+      const cake = (dd/350).toFixed(1);
+      const croissant = (dd/200).toFixed(1);
+      const chipsBag = (dd/330).toFixed(1);
+      const oilTbsp = (dd/110).toFixed(1);
 
-      document.getElementById("burnGuide").innerHTML =
-        `<strong>🍰 ${dailyDeficit}kcal減らすには？</strong><br>
-         ・ショートケーキ ${cake}個分<br>
-         ・クロワッサン ${croissant}個分<br>
-         ・ポテチ ${chips}袋分（60g）<br>
-         ・油 大さじ${oil}杯分<br><br>
-         <strong>🏃‍♀️ 運動で消費するには？</strong><br>
-         ・ウォーキング ${walk}分<br>
-         ・ジョギング ${jog}分<br>
-         ・水泳 ${swim}分`;
+      el("equivFood").innerHTML =
+        `🍰 ショートケーキ <b>${cake}</b> 個分 ／ 🥐 クロワッサン <b>${croissant}</b> 個分<br>` +
+        `🍟 ポテチ（60g袋）<b>${chipsBag}</b> 袋分 ／ 🛢 サラダ油 大さじ <b>${oilTbsp}</b>`;
+
+      // 体重50kg目安：WALK 30分 ≒100kcal, JOG 30分 ≒240kcal, SWIM 30分 ≒300kcal
+      const walkMin = Math.round( (dd / 100) * 30 );
+      const jogMin  = Math.round( (dd / 240) * 30 );
+      const swimMin = Math.round( (dd / 300) * 30 );
+      el("equivMove").innerHTML =
+        `🚶‍♀️ ウォーキング <b>${walkMin}</b> 分 ／ 🏃‍♀️ ジョギング <b>${jogMin}</b> 分 ／ 🏊‍♀️ 水泳 <b>${swimMin}</b> 分`;
     }
 
-    function clearForm() {
-      document.getElementById("weight").value = "";
-      document.getElementById("height").value = "";
-      document.getElementById("targetWeight").value = "";
-      document.getElementById("days").value = "";
-      document.getElementById("result").innerHTML = "";
-      document.getElementById("burnGuide").innerHTML = "";
+    // クリア
+    function clearAll() {
+      ["gender","height","weight","targetWeight","days","activity"].forEach(id=>{
+        const n = el(id);
+        if(!n) return;
+        if(n.tagName === "SELECT"){ n.selectedIndex = id==="activity" ? 2 : 0; }
+        else { n.value = ""; }
+      });
+      el("resultCard").hidden = true;
+      ["bmiLine","targetBmiLine","tdeeLine","pfcLine","goalCalLines","caution","equivFood","equivMove"]
+        .forEach(id=> el(id).innerHTML = "");
     }
 
-    function addLog() {
-      const morning = document.getElementById("logMorning").value;
-      const lunch = document.getElementById("logLunch").value;
-      const dinner = document.getElementById("logDinner").value;
-      const snack = document.getElementById("logSnack").value;
-      const exercise = document.getElementById("logExercise").value;
-      const log = document.getElementById("logArea");
-      log.innerHTML += `☀️ 朝: ${morning}<br>🍱 昼: ${lunch}<br>🌙 夜: ${dinner}<br>🍩 間食: ${snack}<br>🏃‍♀️ 運動: ${exercise}<br><br>`;
+    // ===== ログ保存 (localStorage) =====
+    const keyFor = (dateStr) => `dietLog_${dateStr}`;
 
-      document.getElementById("logMorning").value = "";
-      document.getElementById("logLunch").value = "";
-      document.getElementById("logDinner").value = "";
-      document.getElementById("logSnack").value = "";
-      document.getElementById("logExercise").value = "";
+    function saveLog() {
+      const date = el("logDate").value;
+      if(!date){ alert("日付を選んでね"); return; }
+      const data = {
+        morning: el("logMorning").value.trim(),
+        lunch:   el("logLunch").value.trim(),
+        dinner:  el("logDinner").value.trim(),
+        snack:   el("logSnack").value.trim(),
+        exercise:el("logExercise").value.trim(),
+        savedAt: new Date().toISOString()
+      };
+      localStorage.setItem(keyFor(date), JSON.stringify(data));
+      renderLog(date, data);
+      alert("保存しました！");
     }
+
+    function loadLog() {
+      const date = el("logDate").value;
+      if(!date){ alert("日付を選んでね"); return; }
+      const raw = localStorage.getItem(keyFor(date));
+      if(!raw){ alert("この日に保存されたログはありません"); el("savedLogDisplay").innerHTML=""; return; }
+      const data = JSON.parse(raw);
+      el("logMorning").value = data.morning || "";
+      el("logLunch").value   = data.lunch   || "";
+      el("logDinner").value  = data.dinner  || "";
+      el("logSnack").value   = data.snack   || "";
+      el("logExercise").value= data.exercise|| "";
+      renderLog(date, data);
+    }
+
+    function delLog() {
+      const date = el("logDate").value;
+      if(!date){ alert("日付を選んでね"); return; }
+      localStorage.removeItem(keyFor(date));
+      el("savedLogDisplay").innerHTML = "";
+      alert("削除しました");
+    }
+
+    function renderLog(date, data){
+      el("savedLogDisplay").innerHTML =
+        `<b>🗓️ ${date}</b><br>` +
+        `☀️ 朝：${escapeHtml(data.morning || "")}<br>` +
+        `🍱 昼：${escapeHtml(data.lunch   || "")}<br>` +
+        `🌙 夜：${escapeHtml(data.dinner  || "")}<br>` +
+        `🍩 間食：${escapeHtml(data.snack || "")}<br>` +
+        `🏃‍♀️ 運動：${escapeHtml(data.exercise || "")}`;
+    }
+
+    // 簡易エスケープ
+    function escapeHtml(s){ return s.replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;" }[m])); }
+
+    // ===== イベント =====
+    el("calcBtn").addEventListener("click", calcAll);
+    el("clearBtn").addEventListener("click", clearAll);
+    el("saveLogBtn").addEventListener("click", saveLog);
+    el("loadLogBtn").addEventListener("click", loadLog);
+    el("delLogBtn").addEventListener("click", delLog);
   </script>
 </body>
 </html>
